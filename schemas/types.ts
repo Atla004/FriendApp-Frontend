@@ -1,46 +1,46 @@
 import { z } from 'zod';
 
 const UserInfoSchema = z.object({
-  Biography: z.string().max(512),
-  Gender: z.enum(['male', 'female', 'prefer not to say']),
-  Birthdate: z.date(),
-  Country: z.string(), 
-  Photos: z.array(z.string().url())
+  biography: z.string().max(512),
+  gender: z.enum(['male', 'female', 'other']),
+  birthdate: z.date(),
+  country: z.string(), 
+  photos: z.array(z.string().url())
 });
 
 const UserSchema = z.object({
   _id: z.string(), 
-  Username: z.string().regex(/^\S+$/),
-  Password: z.string(),
-  Email: z.string().email(),
-  Deleted: z.boolean(),
-  Info: UserInfoSchema
+  username: z.string().regex(/^\S+$/),
+  password: z.string(),
+  email: z.string().email(),
+  deleted: z.boolean(),
+  info: UserInfoSchema
 });
 
 const CountrySchema = z.object({
   _id: z.string(), 
-  Name: z.string().max(128)
+  name: z.string().max(128)
 });
 
 const ChatSchema = z.object({
   _id: z.string(), 
-  Users: z.array(z.string()), 
-  LastMessage: z.string() 
+  users: z.array(z.string()), 
+  lastMessage: z.string() 
 });
 
 const LikeSchema = z.object({
   _id: z.string(), 
-  User: z.string(), 
-  Target: z.string() 
+  user: z.string(), 
+  target: z.string() 
 });
 
 const MessageSchema = z.object({
   _id: z.string(), 
-  Type: z.enum(['text', 'image']),
-  Content: z.string().max(512),
-  Chat: z.string(), 
-  Author: z.string(), 
-  DatetimeSent: z.date()
+  type: z.enum(['text', 'image']),
+  content: z.string().max(512),
+  chat: z.string(), 
+  author: z.string(), 
+  datetimeSent: z.date()
 });
 
 type UserInfo = z.infer<typeof UserInfoSchema>;

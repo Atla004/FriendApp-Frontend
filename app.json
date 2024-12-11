@@ -2,9 +2,23 @@
   "expo": {
     "name": "FriendApp-Frontend",
     "slug": "FriendApp-Frontend",
+    "scheme": "friendappfrontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/TLASNotepad-icon.png",
+    "splash": {
+      "image": "./assets/tlaslogo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#EBEBD3"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/TLASNotepad-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.atlas004.FriendAppFrontend"
+    },
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
@@ -16,9 +30,6 @@
       "eas": {
         "projectId": "5e861310-12d1-422e-a308-a287046b01fe"
       }
-    },
-    "android": {
-      "package": "com.atlas004.FriendAppFrontend"
     }
   }
 }

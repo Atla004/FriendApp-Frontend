@@ -17,9 +17,7 @@ const DUMMY_CHATS = [
     lastMessage: "I'm good, you?",
     photo: null,
     timestamp: new Date(),
-  },
-  
-
+  }
 ];
 
 export default function ChatScreen() {

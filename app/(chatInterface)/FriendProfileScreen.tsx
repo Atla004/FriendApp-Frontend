@@ -25,23 +25,23 @@ import { DeleteAccountModalProps } from "@/components/mainInterfaceComponents/Pr
 import SnackbarSaveChanges from "@/components/mainInterfaceComponents/ProfileScreenComponents/SnackbarSaveChanges";
 
 const MockData = {
-  _id: "51823ba3421324234",
-  name: "El Atla",
-  username: "el_atla",
-  email: "atla@tlas.online",
-  password: "12345678",
-  info: {
-    bio: "string",
-    gender: "male",
-    birthdate: "Date(18-08-2004)",
-    country: "Venezuela",
-    Photos: [
-      "https://is.zobj.net/image-server/v1/images?r=gYzSI8o-5BkyuE3rfiUbjlO7pVEZ7mXOSR8_nAL7nqyBa8TDqTG78W-JAeNfF1zbGX8uDf-d6oxuy9AUd1atyEOp7wGz5CAx2eHa7lYmukuwxUnHoYxazo3MAayebFTB12tPi85-9L3iOwZ5qX2qYn9hPJaWodjPNT2CjvBSCXt8mETRR9kLLZL7O3GZbOjjkKtoIcnw37rWAaicgyAMkdaex4kgrjSctoeXlA",
-    ],
-  },
-};
+    _id: "51823ba3421324234",
+    name: "El Atla",
+    username: "el_atla",
+    email: "atla@tlas.online",
+    password: "12345678",
+    info: {
+        bio: "string",
+        gender: "male",
+        birthdate: "Date(18-08-2004)",
+        country: "Venezuela",
+        Photos: [
+            "https://is.zobj.net/image-server/v1/images?r=gYzSI8o-5BkyuE3rfiUbjlO7pVEZ7mXOSR8_nAL7nqyBa8TDqTG78W-JAeNfF1zbGX8uDf-d6oxuy9AUd1atyEOp7wGz5CAx2eHa7lYmukuwxUnHoYxazo3MAayebFTB12tPi85-9L3iOwZ5qX2qYn9hPJaWodjPNT2CjvBSCXt8mETRR9kLLZL7O3GZbOjjkKtoIcnw37rWAaicgyAMkdaex4kgrjSctoeXlA"
+        ]
+    }
+}
 
-export default function ProfileScreen() {
+export default function FriendProfileScreen() {
   const { profile, updateProfile } = useProfileContext();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -115,16 +115,16 @@ export default function ProfileScreen() {
   const handleOnChangePassword = () => {
     // Implement onChange password functionality here
   };
-
-  const handleLogout = () => {
-    // Implement logout functionality here
-  };
+  
+    const handleLogout = () => {
+      // Implement logout functionality here
+    };
 
   const colorScheme = Appearance.getColorScheme();
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -345,15 +345,15 @@ const styles = StyleSheet.create({
   datePickerContainer: {
     borderRadius: 10,
     padding: 10,
-    backgroundColor: "red", // Fondo semitransparente
+    backgroundColor: "red"
   },
   darkMode: {
-    backgroundColor: "red", // Fondo semitransparente para modo oscuro
+    backgroundColor: "red",
   },
   lightMode: {
-    backgroundColor: "red", // Fondo semitransparente para modo claro
+    backgroundColor: "red", 
   },
   datePicker: {
-    backgroundColor: "transparent", // Asegura que el fondo del DateTimePicker sea transparente
+    backgroundColor: "transparent", 
   },
 });

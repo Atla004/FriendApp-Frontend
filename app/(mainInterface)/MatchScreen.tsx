@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useProfileContext } from "@/context/ProfileContext";
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { useState, useRef, useCallback } from "react";
 import { PersonCard } from "@/components/PersonCard";
 const SWIPE_THRESHOLD = 120;
 

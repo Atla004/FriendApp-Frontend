@@ -32,13 +32,11 @@ export default function Index() {
   }, [opacity]);
 
   const handlePress = () => {
-
     router.push("/LoginScreen");
-
   };
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       {isOpen && (
         <Pressable
           style={styles.fullScreenContainer}
@@ -53,7 +51,7 @@ export default function Index() {
           </View>
         </Pressable>
       )}
-      </>
+    </View>
   );
 }
 
