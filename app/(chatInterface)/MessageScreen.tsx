@@ -81,7 +81,7 @@ export default function MessageScreen() {
     >
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => router.push("/ChatScreen")}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color="black" />

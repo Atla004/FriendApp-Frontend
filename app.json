@@ -21,7 +21,8 @@
     },
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.atlas004.FriendAppFrontend"
     },
     "web": {
       "favicon": "./assets/favicon.png"

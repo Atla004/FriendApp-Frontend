@@ -5,24 +5,12 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
-  Modal,
   Image,
-  Appearance,
+
 } from "react-native";
-import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { useProfileContext } from "@/context/ProfileContext";
-import {
-  PasswordChangeModal,
-  EmailChangeModal,
-  DeleteAccountModal,
-} from "@/components/mainInterfaceComponents/ProfileScreenComponents/ProfileScreenComponents";
-import { PasswordChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/PasswordChangeModal";
-import { EmailChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/EmailChangeModal";
-import { DeleteAccountModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
-import SnackbarSaveChanges from "@/components/mainInterfaceComponents/ProfileScreenComponents/SnackbarSaveChanges";
+import { router } from "expo-router";
 
 const MockData = {
     _id: "51823ba3421324234",
@@ -42,105 +30,15 @@ const MockData = {
 }
 
 export default function FriendProfileScreen() {
-  const { profile, updateProfile } = useProfileContext();
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-
-  const [passwordModalProps, setPasswordModalProps] =
-    useState<PasswordChangeModalProps>({
-      visible: false,
-      onClose: () => {
-        setPasswordModalProps({ ...passwordModalProps, visible: false });
-      },
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-      setCurrentPassword: (text: string) => {
-        setPasswordModalProps({ ...passwordModalProps, currentPassword: text });
-      },
-      setNewPassword: (text: string) => {
-        setPasswordModalProps({ ...passwordModalProps, newPassword: text });
-      },
-      setConfirmPassword: (text: string) => {
-        setPasswordModalProps({ ...passwordModalProps, confirmPassword: text });
-      },
-      onChange: () => handleOnChangePassword(),
-    });
-
-  console.log(
-    "ProfileScreen password modal visible",
-    passwordModalProps.visible
-  );
-  const [emailModalProps, setEmailModalProps] = useState<EmailChangeModalProps>(
-    {
-      visible: false,
-      onClose: () => {
-        setEmailModalProps({ ...emailModalProps, visible: false });
-      },
-      newEmail: "",
-      setNewEmail: (text: string) => {
-        setEmailModalProps({ ...emailModalProps, newEmail: text });
-      },
-      onChange: () => handleOnChangeEmail(),
-    }
-  );
-
-  const [deleteAccountModalProps, setDeleteAccountModalProps] =
-    useState<DeleteAccountModalProps>({
-      visible: false,
-      onClose: () => {
-        setDeleteAccountModalProps({
-          ...deleteAccountModalProps,
-          visible: false,
-        });
-      },
-      deleteConfirmation: "",
-      setDeleteConfirmation: (text: string) => {
-        setDeleteAccountModalProps({
-          ...deleteAccountModalProps,
-          deleteConfirmation: text,
-        });
-      },
-      onDelete: () => handleOnDelete(),
-    });
-
-  const handleOnDelete = () => {
-    // Implement onDelete functionality here
-  };
-
-  const handleOnChangeEmail = () => {
-    // Implement onChange email functionality here
-  };
-
-  const handleOnChangePassword = () => {
-    // Implement onChange password functionality here
-  };
-  
-    const handleLogout = () => {
-      // Implement logout functionality here
-    };
-
-  const colorScheme = Appearance.getColorScheme();
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      console.log(result);
-      updateProfile({ photo: result.assets[0].uri });
-      setHasChanges(true);
-    }
-  };
+  const { profile } = useProfileContext();
 
   return (
     <>
       <ScrollView style={styles.container}>
-        <TouchableOpacity style={styles.photoContainer} onPress={pickImage}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.replace('MessageScreen')}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.photoContainer}>
           {profile.photo ? (
             <Image source={{ uri: profile.photo }} style={styles.photo} />
           ) : (
@@ -151,17 +49,17 @@ export default function FriendProfileScreen() {
         </TouchableOpacity>
 
         <View style={styles.section}>
+          <Text style={styles.name}>Juan</Text>
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.label}>Biography</Text>
           <TextInput
             style={styles.input}
             multiline
             numberOfLines={4}
             value={profile.bio || ""}
-            onChangeText={(text) => {
-              updateProfile({ bio: text });
-              setHasChanges(true);
-            }}
-            placeholder="Tell us about yourself..."
+            editable={false}
             maxLength={200}
           />
         </View>
@@ -176,10 +74,6 @@ export default function FriendProfileScreen() {
                   styles.genderButton,
                   profile.gender === gender && styles.genderButtonActive,
                 ]}
-                onPress={() => {
-                  updateProfile({ gender });
-                  setHasChanges(true);
-                }}
               >
                 <Text
                   style={[
@@ -194,83 +88,15 @@ export default function FriendProfileScreen() {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.section}
-          onPress={() => setShowDatePicker(true)}
-        >
+        <View style={styles.section}>
           <Text style={styles.label}>Birth Date</Text>
           <Text style={styles.value}>
             {profile.birthDate
               ? profile.birthDate.toLocaleDateString()
-              : "Select date"}
+              : ""}
           </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.section}
-          onPress={() => {
-            setPasswordModalProps({ ...passwordModalProps, visible: true });
-          }}
-        >
-          <Text style={styles.label}>Change Password</Text>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.section}
-          onPress={() => {
-            setEmailModalProps({ ...emailModalProps, visible: true });
-          }}
-        >
-          <Text style={styles.label}>Change Email</Text>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.section}
-          onPress={() => {
-            setDeleteAccountModalProps({
-              ...deleteAccountModalProps,
-              visible: true,
-            });
-          }}
-        >
-          <Text style={styles.label}>Delete Account</Text>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.section} onPress={handleLogout}>
-          <Text style={styles.label}>Log Out</Text>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
-        </TouchableOpacity>
-
-        {showDatePicker && (
-          <View
-            style={[
-              styles.datePickerContainer,
-              colorScheme === "dark" ? styles.darkMode : styles.lightMode,
-            ]}
-          >
-            <DateTimePicker
-              value={profile.birthDate || new Date()}
-              mode="date"
-              display="spinner"
-              onChange={(event: any, date: Date | undefined) => {
-                setShowDatePicker(false);
-                if (date) {
-                  updateProfile({ birthDate: date });
-                  setHasChanges(true);
-                }
-              }}
-            />
-          </View>
-        )}
-
-        <PasswordChangeModal {...passwordModalProps} />
-        <EmailChangeModal {...emailModalProps} />
-        <DeleteAccountModal {...deleteAccountModalProps} />
+        </View>
       </ScrollView>
-      {hasChanges && <SnackbarSaveChanges setHasChanges={setHasChanges} />}
     </>
   );
 }
@@ -279,6 +105,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  backButton: {
+    padding: 20,
+    position: "absolute",
+    zIndex: 1,
+
   },
   photoContainer: {
     alignItems: "center",
@@ -300,6 +132,12 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: "white",
     padding: 15,
+    marginBottom: 10,
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 10,
   },
   label: {

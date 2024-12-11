@@ -1,60 +1,35 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Animated,
-  Pressable,
-} from "react-native";
-import { router } from "expo-router";
+import { useEffect } from "react";
+import LoginScreen from "./(authScreen)/LoginScreen";
+import { Alert, BackHandler, StyleSheet } from "react-native";
+import FriendProfileScreen from "./(chatInterface)/FriendProfileScreen";
 
 export default function Index() {
-  const [isOpen, setIsOpen] = useState(true);
-  const opacity = useState(new Animated.Value(0))[0];
-
   useEffect(() => {
-    const animate = () => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ]).start(() => animate());
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
     };
-    animate();
-  }, [opacity]);
 
-  const handlePress = () => {
-    router.push("/LoginScreen");
-  };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
 
+    return () => backHandler.remove();
+  }, []);
   return (
-    <View style={{ flex: 1 }}>
-      {isOpen && (
-        <Pressable
-          style={styles.fullScreenContainer}
-          onPress={handlePress}
-        >
-          <View style={styles.pokedex}>
-            <View style={styles.textContainer}>
-              <Animated.Text style={[styles.text, { opacity }]}>
-                Tap to Login
-              </Animated.Text>
-            </View>
-          </View>
-        </Pressable>
-      )}
-    </View>
+    <>
+      <FriendProfileScreen />
+    </>
   );
 }
-
 const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,

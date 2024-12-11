@@ -8,6 +8,7 @@ import {
   Modal,
   Image,
   Appearance,
+  Alert,
 } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +24,8 @@ import { PasswordChangeModalProps } from "@/components/mainInterfaceComponents/P
 import { EmailChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/EmailChangeModal";
 import { DeleteAccountModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
 import SnackbarSaveChanges from "@/components/mainInterfaceComponents/ProfileScreenComponents/SnackbarSaveChanges";
+import { supabase } from "@/utils/supabaseClient";
+import { uploadAvatar } from "@/utils/saveImages";
 
 const MockData = {
   _id: "51823ba3421324234",
@@ -131,7 +134,8 @@ export default function ProfileScreen() {
     });
 
     if (!result.canceled) {
-      console.log(result);
+      const image = result.assets[0];
+      uploadAvatar(image);
       updateProfile({ photo: result.assets[0].uri });
       setHasChanges(true);
     }
@@ -149,6 +153,10 @@ export default function ProfileScreen() {
             </View>
           )}
         </TouchableOpacity>
+
+        <View style={styles.section}>
+          <Text style={styles.name}>Juan</Text>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.label}>Biography</Text>
@@ -300,6 +308,13 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: "white",
     padding: 15,
+    marginBottom: 10,
+  },
+
+  name: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 10,
   },
   label: {
