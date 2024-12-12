@@ -12,6 +12,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { PersonCard } from "@/components/PersonCard";
 import { getMatchData, postLike } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
+import { joinNotificationsRoom, socket } from "@/utils/socket";
 
 const pathToImage = "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
 const SWIPE_THRESHOLD = 120;
@@ -25,12 +26,19 @@ interface Match {
 export default function MatchScreen() {
   const router = useRouter();
   const { profile } = useProfileContext();
-  const {  token } = useUserData();
+  const { token, _id } = useUserData();
   const [showModal, setShowModal] = useState(false);
   const position = useRef(new Animated.ValueXY()).current;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [matchData, setMatchData] = useState<Match[]>([]);
   const next = useRef<string | null>(null);
+
+  joinNotificationsRoom(_id as string);
+  useEffect(() => {
+    socket.on('match', (username: string) => {
+      console.log(`match with ${username}`)
+    })
+  }, [])
 
   const nextPerson = async() => {
     if (currentIndex < matchData.length - 1) {
@@ -53,9 +61,15 @@ export default function MatchScreen() {
       if (matchData.length === 0 || matchData.length === currentIndex + 1) {
         getNewMatchData(token);
       }
+      socket.emit('join-self', _id, (response: string) => {
+        console.log(response)
+      })
 
       return () => {
         console.log("MatchScreen unfocused");
+        socket.emit('leave', `self-${_id}`, (response: string) => {
+          console.log(response)
+        })
       };
     }, [profile])
   );

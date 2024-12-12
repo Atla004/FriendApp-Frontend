@@ -187,9 +187,9 @@ const getMessages = async (
       },
     });
     const data = await response.json();
-    console.log("#".repeat(15))
-    console.log(JSON.stringify(data, null, 2));
-    console.log("#".repeat(15))
+    // console.log("#".repeat(15))
+    // console.log(JSON.stringify(data, null, 2));
+    // console.log("#".repeat(15))
     const formattedData = data.data.map((msg: Message) => ({
       id: msg._id,
       timestamp: new Date(msg.datetime_sent),

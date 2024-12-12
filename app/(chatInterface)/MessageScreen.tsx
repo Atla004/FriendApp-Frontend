@@ -32,23 +32,24 @@ interface DUMMY_MESSAGES {
 export default function MessageScreen() {
   const [messages, setMessages] = useState<DUMMY_MESSAGES[]>([]);
   const flatListRef = useRef<FlatList>(null);
-  const { chat_id, other_username } = useLocalSearchParams()
+  const { chat_id: this_chat_id, other_username } = useLocalSearchParams()
   const { token, username, _id } = useUserData()
 
   useEffect(() => {
-    getMessage(chat_id as string, token as string, setMessages, _id as string)
+    getMessage(this_chat_id as string, token as string, setMessages, _id as string)
+    joinChat(this_chat_id as string, username as string)
   }, []);
 
-  joinChat(chat_id as string)
   socket.on('message', (content: string, type: string, got_username: string, chat_id: string, datetime: string) => {
     console.log("Message: ",{content, type, username: got_username, chat_id});
+    if (got_username === username || chat_id !== this_chat_id)
+      return;
+
     const recievedMessage = {
       id: Date.now().toString(),
       timestamp: new Date(datetime),
       isMine: false
     } 
-    if (got_username === username)
-      return;
 
     const messageContent = type === "text" ? { text: content } : { text: "", image: content }
     setMessages([...messages, { ...recievedMessage, ...messageContent }])
@@ -61,7 +62,7 @@ export default function MessageScreen() {
       timestamp: new Date(),
       isMine: true,
     };
-    postTextMessage(token as string, chat_id as string, text)
+    postTextMessage(token as string, this_chat_id as string, text)
     .then(() => {
       setMessages([...messages, newMessage]);
     })
@@ -85,7 +86,7 @@ export default function MessageScreen() {
         timestamp: new Date(),
         isMine: true,
       };
-      postImageMessage(token as string, chat_id as string, result.assets[0].uri)
+      postImageMessage(token as string, this_chat_id as string, result.assets[0].uri)
       .then(() => {
         setMessages([...messages, newMessage]);
       })
