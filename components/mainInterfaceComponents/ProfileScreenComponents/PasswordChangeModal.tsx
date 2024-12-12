@@ -24,7 +24,6 @@ const PasswordChangeModal = ({
   setConfirmPassword,
   onChange,
 }: PasswordChangeModalProps) => {
-  console.log("PasswordChangeModal",visible);
   return (
     <Modal
       visible={visible}

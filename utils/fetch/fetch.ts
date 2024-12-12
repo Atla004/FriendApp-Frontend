@@ -1,4 +1,11 @@
-import { LoginBody, LoginResponse, loginResponseSchema, registerBodySchema, RegisterResponse, registerResponseSchema } from "@/schemas/responses";
+import {
+  LoginBody,
+  LoginResponse,
+  loginResponseSchema,
+  registerBodySchema,
+  RegisterResponse,
+  registerResponseSchema,
+} from "@/schemas/responses";
 
 const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
@@ -19,7 +26,6 @@ const getToken = async (email: string) => {
 
 const fetchLogin = async ({ username, password }: LoginBody) => {
   try {
-    console.log("fetchLogin",`${backendUrl}/auth/login` );
     const response = await fetch(`${backendUrl}/auth/login`, {
       method: "POST",
       headers: {
@@ -31,16 +37,16 @@ const fetchLogin = async ({ username, password }: LoginBody) => {
       }),
     });
 
-    const data = await response.json();
-    
+    const data: LoginResponse = await response.json();
     if (!response.ok) {
-      throw new Error(data.error as any);
+      throw new Error((data as any).error as any);
     }
+    console.log("data", data);
+    loginResponseSchema.parse(data);
 
-    loginResponseSchema.parse(data); 
     return data;
   } catch (error) {
-    console.error("Error validating login response:", error);
+    console.log(error);
     throw new Error("Invalid login response");
   }
 };
@@ -67,23 +73,39 @@ const getProfileData = async (
   }
 };
 
-const updateProfileData = async (data: any, token: string, setToast: any) => {
+interface ProfileData {
+  full_name: string;
+  bio: string;
+  gender: string;
+  birthdate: Date | null;
+  country: string;
+  photos: string[];
+}
+
+const updateProfileData = async (
+  { full_name, bio, gender, birthdate, country, photos }: ProfileData,
+  token: string
+) => {
   try {
-    const response = await fetch(`${backendUrl}/api/user/update`, {
+    const response = await fetch(`${backendUrl}/user`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        "Content-Type": "Application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        full_name: full_name,
+        bio: bio,
+        gender: gender,
+        birthdate: birthdate?.toString(),
+        country: country,
+        photos: photos,
+      }),
     });
 
     const res = await response.json();
-    console.log({ res });
-    setToast("Profile updated successfully", false, 3000);
   } catch (error) {
-    console.error(error);
-    setToast("Error updating profile data", true, 3000);
+    console.log(error);
   }
 };
 
@@ -198,7 +220,7 @@ const fetchRegister = async (data: any) => {
       body: JSON.stringify(data),
     });
 
-    const res:RegisterResponse = await response.json();
+    const res: RegisterResponse = await response.json();
     if (!response.ok) {
       console.log("Error eeeeeregistering", (res as any).error);
       throw new Error((res as any).error);
@@ -207,7 +229,7 @@ const fetchRegister = async (data: any) => {
     console.log({ res });
     return res;
   } catch (e) {
-    return {success:false , error:(e as Error).message};
+    return { success: false, error: (e as Error).message };
   }
 };
 

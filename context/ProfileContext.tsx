@@ -1,8 +1,8 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-interface Profile {
+export interface Profile {
   ready: boolean;
-  photo: string | null;
+  photo: string[] | null;
   bio: string | null;
   gender: string | null;
   birthDate: Date | null;
@@ -19,10 +19,12 @@ interface ProfileContextType {
 const defaultProfile: Profile = {
   ready: false,
   photo: null,
-  bio: null,
+  bio: "A veces pienso en que hacer con mi vida",
   gender: null,
   birthDate: null,
   email: '',
+  country: '',
+  full_name: 'atlas'
 };
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -39,11 +41,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         newProfile.gender && 
         newProfile.birthDate &&
         newProfile.photo &&
-        newProfile.full_name &&
-        newProfile.country
+        newProfile.full_name 
       );
+      console.log('Profile updated', newProfile);
       return newProfile;
     });
+
   };
 
   return (

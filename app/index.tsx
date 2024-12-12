@@ -32,7 +32,7 @@ export default function Index() {
   }, [opacity]);
 
   const handlePress = () => {
-    router.push("/LoginScreen");
+    router.push("/MatchScreen");
   };
 
   return (

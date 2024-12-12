@@ -8,13 +8,15 @@ export const loginBodySchema = z.object({
 
 
 const UserInfoSchema = z.object({
+  bio: z.string().optional(),
+  full_name: z.string().optional(),
+  gender: z.enum(["male", "female"]).optional(),
   birthdate: z.string().refine(date => !isNaN(Date.parse(date)), {
     message: "Invalid date format",
-  }),
-  country: z.string(),
-  photos: z.array(z.string().url())
+  }).optional(),
+  country: z.string().optional(),
+  photos: z.array(z.string().url()).optional()
 });
-
 
 export const loginResponseSchema = z.object({
   success: z.string(),
@@ -23,7 +25,7 @@ export const loginResponseSchema = z.object({
       _id: z.string(),
       username: z.string(),
       email: z.string().email(),
-      info: UserInfoSchema,
+      info: UserInfoSchema.optional(), // Hacer que info sea opcional
     }),
     token: z.string(),
   }),
