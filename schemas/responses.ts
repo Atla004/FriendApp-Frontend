@@ -60,8 +60,7 @@ export const createChatResponseSchema = z.object({
 // Get Chats
 export const getChatsResponseSchema = z.object({
   success: z.string(),
-  data: z.array(ChatSchema
-  ),
+  data: z.array(ChatSchema),
 });
 
 // Send Message
