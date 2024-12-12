@@ -6,32 +6,6 @@ import { Chat } from "@/schemas/types";
 import { socket } from "@/utils/socket";
 import { getChats } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
-import { GetChatsResponse } from "@/schemas/responses";
-
-const data: GetChatsResponse = {
-  success: "Found Chats!",
-  data: [
-    {
-      _id: "67561f39a2fb58994b566dee",
-      user_id: "67560c703f1af4b512279772",
-      user: "chantyuwu",
-      photo: "/public/el_dolar-1734016293288.jpg",
-      last_message: {
-        content: "Welcome!",
-        datetime_sent: "2024-12-12T00:16:50.716Z",
-        author: "el_atla",
-        type: "text",
-      },
-    },
-    {
-      _id: "675afddec74fea6958ae5e24",
-      user_id: "675a331e098fce11ff954135",
-      user: "atlas",
-      photo: "/public/atlas-1734013616323.jpg",
-      last_message: null,
-    },
-  ],
-};
 
 const pathToImage =
   "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
@@ -51,6 +25,7 @@ export default function ChatScreen() {
       chat_id: string,
       datetime_sent: string
     ) => {
+      console.log("recibidest jun mensajesl vboob maosdfjsdlfkasjdflksdfjla;ksdfj");
       console.log("Message: ", {
         content,
         username,
@@ -74,7 +49,6 @@ export default function ChatScreen() {
       });
     }
   );
-  
 
   useEffect(() => {
     getChats(token as string, setChats);
@@ -129,7 +103,6 @@ export default function ChatScreen() {
           <Text style={styles.notFoundText}>
             {searchQuery ? "not found" : "you don't have chats yet"}
           </Text>
-          .
         </View>
       )}
     </View>
