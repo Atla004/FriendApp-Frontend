@@ -14,7 +14,8 @@ import { getMatchData, postLike } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
 import { joinNotificationsRoom, socket } from "@/utils/socket";
 
-const pathToImage = "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
+const pathToImage =
+  "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
 const SWIPE_THRESHOLD = 120;
 
 interface Match {
@@ -35,12 +36,12 @@ export default function MatchScreen() {
 
   joinNotificationsRoom(_id as string);
   useEffect(() => {
-    socket.on('match', (username: string) => {
-      console.log(`match with ${username}`)
-    })
-  }, [])
+    socket.emit("join-self", _id, (response: string) => {
+      console.log("join-self", response);
+    });
+  }, []);
 
-  const nextPerson = async() => {
+  const nextPerson = async () => {
     if (currentIndex < matchData.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
@@ -55,38 +56,29 @@ export default function MatchScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("MatchScreen focused profile", profile);
-      console.log("profile.ready", profile.ready);
       setShowModal(!profile.ready);
       if (matchData.length === 0 || matchData.length === currentIndex + 1) {
         getNewMatchData(token);
       }
-      socket.emit('join-self', _id, (response: string) => {
-        console.log(response)
-      })
 
       return () => {
         console.log("MatchScreen unfocused");
-        socket.emit('leave', `self-${_id}`, (response: string) => {
-          console.log(response)
-        })
       };
     }, [profile])
   );
 
-  const getNewMatchData = async (token: any, page: string= '/api/match/get/1') => {
-    let data
+  const getNewMatchData = async (
+    token: any,
+    page: string = "/api/match/get/1"
+  ) => {
+    let data;
     // solo agarrar el ultimo numero de "/api/match/get/2" para saber la pagina y ponerlo en numberPage como numero
     if (page) {
-      
       const numberPage = parseInt(page.split("/").pop() as string);
       data = await getMatchData(token, numberPage);
-
     } else {
-       data = await getMatchData(token);
+      data = await getMatchData(token);
     }
-
-    console.log("data", data.data.next);
     next.current = data.data.next;
     setMatchData(data.data.people);
   };
@@ -112,7 +104,7 @@ export default function MatchScreen() {
       toValue: { x: -500, y: 0 },
       duration: 250,
       useNativeDriver: false,
-    }).start(async() => {
+    }).start(async () => {
       console.log("swipeLeft");
       postLike(token as string, matchData[currentIndex].id);
       await nextPerson();
@@ -125,7 +117,7 @@ export default function MatchScreen() {
       toValue: { x: 600, y: 0 },
       duration: 250,
       useNativeDriver: false,
-    }).start(async() => {
+    }).start(async () => {
       console.log("swipeRight");
       await nextPerson();
       fromAboveAnimation();
@@ -193,7 +185,10 @@ export default function MatchScreen() {
         style={[styles.card, getCardStyle()]}
         {...panResponder.panHandlers}
       >
-        <PersonCard name={personName} imageUrl={`${pathToImage}${personImageUrl}`} />
+        <PersonCard
+          name={personName}
+          imageUrl={`${pathToImage}${personImageUrl}`}
+        />
       </Animated.View>
     </View>
   );
