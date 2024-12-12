@@ -6,6 +6,16 @@ export const loginBodySchema = z.object({
   password: z.string().min(8).regex(/^\S+$/),
 });
 
+
+const UserInfoSchema = z.object({
+  birthdate: z.string().refine(date => !isNaN(Date.parse(date)), {
+    message: "Invalid date format",
+  }),
+  country: z.string(),
+  photos: z.array(z.string().url())
+});
+
+
 export const loginResponseSchema = z.object({
   success: z.string(),
   data: z.object({
@@ -13,6 +23,7 @@ export const loginResponseSchema = z.object({
       _id: z.string(),
       username: z.string(),
       email: z.string().email(),
+      info: UserInfoSchema,
     }),
     token: z.string(),
   }),

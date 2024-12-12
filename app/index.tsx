@@ -1,35 +1,60 @@
-import { useEffect } from "react";
-import LoginScreen from "./(authScreen)/LoginScreen";
-import { Alert, BackHandler, StyleSheet } from "react-native";
-import FriendProfileScreen from "./(chatInterface)/FriendProfileScreen";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Animated,
+  Pressable,
+} from "react-native";
+import { router } from "expo-router";
 
 export default function Index() {
+  const [isOpen, setIsOpen] = useState(true);
+  const opacity = useState(new Animated.Value(0))[0];
+
   useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        {text: 'YES', onPress: () => BackHandler.exitApp()},
-      ]);
-      return true;
+    const animate = () => {
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ]).start(() => animate());
     };
+    animate();
+  }, [opacity]);
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
+  const handlePress = () => {
+    router.push("/LoginScreen");
+  };
 
-    return () => backHandler.remove();
-  }, []);
   return (
-    <>
-      <FriendProfileScreen />
-    </>
+    <View style={{ flex: 1 }}>
+      {isOpen && (
+        <Pressable
+          style={styles.fullScreenContainer}
+          onPress={handlePress}
+        >
+          <View style={styles.pokedex}>
+            <View style={styles.textContainer}>
+              <Animated.Text style={[styles.text, { opacity }]}>
+                Tap to Login
+              </Animated.Text>
+            </View>
+          </View>
+        </Pressable>
+      )}
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,

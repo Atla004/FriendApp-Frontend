@@ -1,9 +1,10 @@
 import { Alert } from "react-native";
-import { supabase } from "./supabaseClient";
+import { uploadFile } from "./supabaseClient";
+
+const user= 'atlas'
 
 export async function uploadAvatar(image: any) {
   try {
-    console.log("Got image", image);
 
     if (!image.uri) {
       throw new Error("No image uri!"); 
@@ -12,24 +13,17 @@ export async function uploadAvatar(image: any) {
     const arraybuffer = await fetch(image.uri).then((res) =>
       res.arrayBuffer()
     );
+    const path = `/public/${user}-${Date.now()}.jpg`;;
 
-    const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
-    const path = `${Date.now()}.${fileExt}`;
-    console.log("Uploading to path", path);
-    const { data, error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(path, arraybuffer, {
-        contentType: image.mimeType ?? "image/jpeg",
-      });
-
-    if (uploadError) {
-      throw uploadError;
+    const data = await uploadFile(arraybuffer,path );
+    if (!data.success) {
+      throw new Error("Error uploading the file");
     }
+    return path;
+    
+
+
   } catch (error) {
-    if (error instanceof Error) {
-      Alert.alert(error.message);
-    } else {
-      throw error;
-    }
+
   }
 }

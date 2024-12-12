@@ -4,4 +4,7 @@ import UsernameChangeModal from "@/components/mainInterfaceComponents/ProfileScr
 import DeleteAccountModal from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
 
 
-export { PasswordChangeModal, EmailChangeModal, UsernameChangeModal, DeleteAccountModal };
+
+
+
+

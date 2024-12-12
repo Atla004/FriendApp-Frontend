@@ -9,13 +9,14 @@ import {
   Text,
   Image,
 } from "react-native";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { MessageComponent } from "@/components/MessageComponent";
 import { SendMessageComponent } from "@/components/SendMessageComponent";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+
 
 interface DUMMY_MESSAGES {
   id: string;
@@ -45,6 +46,10 @@ export default function MessageScreen() {
   const [messages, setMessages] = useState<DUMMY_MESSAGES[]>(DUMMY_MESSAGES);
   const flatListRef = useRef<FlatList>(null);
 
+  useEffect(() => {
+
+  }, []);
+
   const handleSend = (text: string) => {
     const newMessage = {
       id: Date.now().toString(),
@@ -57,7 +62,7 @@ export default function MessageScreen() {
 
   const handleImageSend = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       quality: 1,
     });
 

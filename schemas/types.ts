@@ -22,11 +22,20 @@ const CountrySchema = z.object({
   name: z.string().max(128)
 });
 
-const ChatSchema = z.object({
-  _id: z.string(), 
-  users: z.array(z.string()), 
-  lastMessage: z.string() 
+const lastMessageSchema = z.object({
+  datetime_sent: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Invalid date format",
+  }),
+  content: z.string(),
+  author: z.string(),
 });
+
+const ChatSchema = z.object({
+  _id: z.string(),
+  users: z.string(),
+  last_message: lastMessageSchema,
+});
+
 
 const LikeSchema = z.object({
   _id: z.string(), 

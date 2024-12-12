@@ -142,12 +142,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "#1f2937",
     borderRadius: 12,
     padding: 24,
     marginHorizontal: 16,
     borderWidth: 4,
-    borderColor: '#1f2937',
+    borderColor: "#1f2937",
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -166,17 +166,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontSize: 40,
+    color: "white",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
+    fontFamily: "Dancing",
   },
   subtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 20,
   },
   codeContainer: {

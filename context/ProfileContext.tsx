@@ -7,6 +7,8 @@ interface Profile {
   gender: string | null;
   birthDate: Date | null;
   email: string;
+  full_name?: string;
+  country?: string;
 }
 
 interface ProfileContextType {
@@ -29,13 +31,16 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
 
   const updateProfile = (updates: Partial<Profile>) => {
+
     setProfile(prev => {
       const newProfile = { ...prev, ...updates };
-      // Update ready status based on required fields
       newProfile.ready = Boolean(
         newProfile.bio && 
         newProfile.gender && 
-        newProfile.birthDate
+        newProfile.birthDate &&
+        newProfile.photo &&
+        newProfile.full_name &&
+        newProfile.country
       );
       return newProfile;
     });

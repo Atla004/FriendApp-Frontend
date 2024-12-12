@@ -14,12 +14,13 @@ import { router } from "expo-router";
 import { SecureInput } from "@/components/basic/MyComponents";
 import { validateEmail, validateUsername } from "@/utils/validation";
 import { useToast } from "@/context/ToastContext";
+import { fetchRegister } from "@/utils/fetch/fetch";
 
 const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
 interface Errors {
-  username?: string ;
-  email?: string ;
+  username?: string;
+  email?: string;
   password?: string;
   confirmPassword?: string;
 }
@@ -32,89 +33,70 @@ const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
 
-
   const handleRegister = async () => {
-    //limpiar errores
-    setErrors({});
-
-
-    const samePassword =
-      password === confirmPassword
-        ? { valid: true }
-        : { valid: false, errors: ["Passwords do not match"] };
-
-    const result2 = {
-      username: validateUsername(username),
-      password: validateUsername(password),
-      confirmPassword: samePassword,
-      email: validateEmail(email),
-    };
-
-    if (
-      !result2.username.valid ||
-      !result2.password.valid ||
-      !result2.confirmPassword.valid ||
-      !result2.email.valid
-    ) {
-      setErrors({
-        username: result2.username.errors?.[0] || "",
-        password: result2.password.errors?.[0] || "",
-        confirmPassword: result2.confirmPassword.errors?.[0] || "",
-        email: result2.email.errors?.[0] || "",
-      });
-      return;
-    }
-
-
-    router.push("LoginScreen");
-    setToast("Registration successful!", true, 3000, "green");
-    return;
     try {
-      const response = await fetch(`${backendUrl}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password,user_type: "player"}),
-      });
-  
-      if (!response.ok) {
-        setToast("Registration failed", true, 3000);
+      setErrors({});
+
+      const samePassword =
+        password === confirmPassword
+          ? { valid: true }
+          : { valid: false, errors: ["Passwords do not match"] };
+
+      const result2 = {
+        username: validateUsername(username),
+        password: validateUsername(password),
+        confirmPassword: samePassword,
+        email: validateEmail(email),
+      };
+
+      if (
+        !result2.username.valid ||
+        !result2.password.valid ||
+        !result2.confirmPassword.valid ||
+        !result2.email.valid
+      ) {
+        setErrors({
+          username: result2.username.errors?.[0] || "",
+          password: result2.password.errors?.[0] || "",
+          confirmPassword: result2.confirmPassword.errors?.[0] || "",
+          email: result2.email.errors?.[0] || "",
+        });
+
         return;
       }
-      console.log("Registration successful");
-  
+
+      const data = await fetchRegister({ username, email, password });
+
+      if (data.success) {
+        setToast("Registered successfully", true, 3000, "green");
         router.push("LoginScreen");
-        setToast("Registration successful!", true, 3000, "green");
+      } else {
+        setToast((data as any).error, true, 3000);
+      }
     } catch (error) {
-      setToast("Registration failed", true, 3000);
+      console.log(error);
+      setToast("Error registering", true, 3000, "red");
     }
-  
-  
   };
 
   const goBackToLogin = () => {
-      router.push("LoginScreen");
+    router.push("LoginScreen");
   };
-
 
   return (
     <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoid}
-      >
+      <>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.card}>
-
-            <Text style={styles.title}>New Trainer Registration</Text>
+            <Text style={styles.title}>New Register</Text>
 
             <TextInput
               style={styles.input}
-              placeholder="Trainer Name"
+              placeholder="Username"
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
+              placeholderTextColor={"rgba(235, 237, 240,0.5)"}
             />
             {errors.username && (
               <Text style={styles.errorText}>{errors.username}</Text>
@@ -127,6 +109,7 @@ const RegisterScreen = () => {
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
+              placeholderTextColor={"rgba(235, 237, 240,0.5)"}
             />
             {errors.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
@@ -143,16 +126,14 @@ const RegisterScreen = () => {
               onChangeText={setConfirmPassword}
             />
             {errors.confirmPassword && (
-              <Text style={styles.errorText}>
-                {errors.confirmPassword}
-              </Text>
+              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
             )}
 
             <TouchableOpacity
               style={styles.registerButton}
               onPress={handleRegister}
             >
-              <Text style={styles.registerButtonText}>Start Your Journey</Text>
+              <Text style={styles.registerButtonText}>Next</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.backButton} onPress={goBackToLogin}>
@@ -160,7 +141,7 @@ const RegisterScreen = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </>
     </>
   );
 };
@@ -177,7 +158,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#1f2937",
     borderRadius: 12,
     padding: 24,
     marginHorizontal: 16,
@@ -198,11 +179,11 @@ const styles = StyleSheet.create({
     height: 100,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontSize: 40,
+    color: "white",
     marginBottom: 24,
     textAlign: "center",
+    fontFamily: "Dancing",
   },
   input: {
     width: "100%",
@@ -212,14 +193,16 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 5,
     fontSize: 16,
+    color: "white",
   },
   registerButton: {
-    backgroundColor: "#ef4444",
+    backgroundColor: "#5b4dd6",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 24,
     width: "100%",
     marginBottom: 16,
+    top: 10,
   },
   registerButtonText: {
     color: "white",

@@ -19,6 +19,7 @@ const SecureInput = ({ placeholder ="password",value, onChangeText }: SecureInpu
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={!showPassword}
+        placeholderTextColor={"rgba(235, 237, 240,0.5)"}
       />
       <TouchableOpacity
         style={styles.showPasswordButton}
@@ -48,6 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    color: "white",
   },
 });
 

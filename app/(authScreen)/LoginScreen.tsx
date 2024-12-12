@@ -14,6 +14,8 @@ import SecureInput from "../../components/basic/SecureInput";
 import Checkbox from "../../components/basic/Checkbox";
 import { validatePassword, validateUsername } from "../../utils/validation";
 import { useUserData } from "@/context/UserDataContext";
+import { fetchLogin } from "@/utils/fetch/fetch";
+import { useProfileContext } from "@/context/ProfileContext";
 
 const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
@@ -25,6 +27,8 @@ export const LoginScreen = () => {
     _id: ide,
     token: tok,
   } = useUserData();
+
+  const { profile,updateProfile} = useProfileContext();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -47,41 +51,34 @@ export const LoginScreen = () => {
     }
 
     try {
-      router.push("/MatchScreen");
-      return 
-
-      const response = await fetch(`${backendUrl}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        console.log(JSON.stringify(response, null, 4));
-        setErrors({ username: "Invalid username or password", password: "" });
+      const data = await fetchLogin({ username, password });
+      if(!data.success){
+        setErrors({ username: "", password: "Invalid username or password" });
         return;
       }
-
-      const responseData = await response.json();
-      if (responseData.error) {
-        return;
-      }
-
-      console.log(JSON.stringify(responseData, null, 4));
       setUser({
-        username: responseData.data.user.username,
-        _id: responseData.data.user._id,
-        email: responseData.data.user.email,
-        token: responseData.data.token,
+        username: data.data.user.username,
+        _id: data.data.user._id,
+        email: data.data.user.email,
+        token: data.data.token,
       });
+      
+      const d = typeof profile
 
+
+
+
+      router.push("/MatchScreen");
+      
+      
+      
+      
       if (staySignedIn) {
-        await AsyncStorage.setItem("user", JSON.stringify(responseData.data));
+        await AsyncStorage.setItem("user", JSON.stringify(data.data));
         console.log("User data saved in localStorage");
       }
-
+      
+      return 
 
     } catch (error) {
       console.log(error);
@@ -98,7 +95,6 @@ export const LoginScreen = () => {
   };
 
   useEffect(() => {
-    console.log("LoginScreen mounted");
     validateAutoLogin();
   }, []);
 
@@ -153,6 +149,7 @@ export const LoginScreen = () => {
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
+          placeholderTextColor={"rgba(235, 237, 240,0.5)"}
         />
         {errors.username && (
           <Text style={styles.errorText}>{errors.username}</Text>
@@ -173,7 +170,7 @@ export const LoginScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.linkButton} onPress={handleRegister}>
-          <Text style={styles.linkText}>Register as New Trainer</Text>
+          <Text style={styles.linkText}>Register</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.linkButton} onPress={handleForgot}>
@@ -188,19 +185,19 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontSize: 40,
+    color: "white",
     marginBottom: 24,
     textAlign: "center",
+    fontFamily: "Dancing",
+
   },
   keyboardAvoid: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.1)",
   },
   card: {
-    backgroundColor: "white",
-    marginTop: 24,
+    backgroundColor: "#1f2937",
     borderRadius: 12,
     padding: 24,
     marginHorizontal: 16,
@@ -228,6 +225,8 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 5,
     fontSize: 16,
+    color: "white",
+
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -236,10 +235,11 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: 16,
-    color: "#4b5563",
+    color: "#ffffff",
   },
+
   loginButton: {
-    backgroundColor: "#ef4444",
+    backgroundColor: "#5b4dd6",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 24,
@@ -252,11 +252,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+
+  
   linkButton: {
     marginVertical: 4,
   },
   linkText: {
-    color: "#3b82f6",
     fontSize: 16,
     textAlign: "center",
   },

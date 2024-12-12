@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -15,36 +16,33 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useProfileContext } from "@/context/ProfileContext";
-import {
-  PasswordChangeModal,
-  EmailChangeModal,
-  DeleteAccountModal,
-} from "@/components/mainInterfaceComponents/ProfileScreenComponents/ProfileScreenComponents";
-import { PasswordChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/PasswordChangeModal";
-import { EmailChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/EmailChangeModal";
-import { DeleteAccountModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
+import PasswordChangeModal, { PasswordChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/PasswordChangeModal";
+import EmailChangeModal, { EmailChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/EmailChangeModal";
+import DeleteAccountModal, { DeleteAccountModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
 import SnackbarSaveChanges from "@/components/mainInterfaceComponents/ProfileScreenComponents/SnackbarSaveChanges";
-import { supabase } from "@/utils/supabaseClient";
 import { uploadAvatar } from "@/utils/saveImages";
 
-const MockData = {
-  _id: "51823ba3421324234",
-  name: "El Atla",
-  username: "el_atla",
-  email: "atla@tlas.online",
-  password: "12345678",
-  info: {
-    bio: "string",
-    gender: "male",
-    birthdate: "Date(18-08-2004)",
-    country: "Venezuela",
-    Photos: [
-      "https://is.zobj.net/image-server/v1/images?r=gYzSI8o-5BkyuE3rfiUbjlO7pVEZ7mXOSR8_nAL7nqyBa8TDqTG78W-JAeNfF1zbGX8uDf-d6oxuy9AUd1atyEOp7wGz5CAx2eHa7lYmukuwxUnHoYxazo3MAayebFTB12tPi85-9L3iOwZ5qX2qYn9hPJaWodjPNT2CjvBSCXt8mETRR9kLLZL7O3GZbOjjkKtoIcnw37rWAaicgyAMkdaex4kgrjSctoeXlA",
-    ],
-  },
-};
 
-export default function ProfileScreen() {
+
+const profile = {
+  "_id": "51823ba3421324234",
+  "username": "el_atla",
+  "info": {
+      "full_name": "Atlina garcia",
+      "bio": "insert bio",
+      "gender": "male",
+      "birthdate": "2004-08-18T00:00:00",
+      "country": {
+          "_id": "9123749127b9187239826234",
+          "name": "Venezuela"
+      },
+      "photos": [
+          "https://is.zobj.net/image-server/v1/images?r=gYzSI8o-5BkyuE3rfiUbjlO7pVEZ7mXOSR8_nAL7nqyBa8TDqTG78W-JAeNfF1zbGX8uDf-d6oxuy9AUd1atyEOp7wGz5CAx2eHa7lYmukuwxUnHoYxazo3MAayebFTB12tPi85-9L3iOwZ5qX2qYn9hPJaWodjPNT2CjvBSCXt8mETRR9kLLZL7O3GZbOjjkKtoIcnw37rWAaicgyAMkdaex4kgrjSctoeXlA"
+      ]
+  }
+}
+
+const  ProfileScreen=()=> {
   const { profile, updateProfile } = useProfileContext();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -283,10 +281,11 @@ export default function ProfileScreen() {
   );
 }
 
+export default ProfileScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   photoContainer: {
     alignItems: "center",

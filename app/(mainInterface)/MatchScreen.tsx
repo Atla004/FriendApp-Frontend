@@ -52,7 +52,7 @@ export default function MatchScreen() {
     useCallback(() => {
       console.log("profile.ready", profile.ready);
       setCurrentIndex(0);
-      //setShowModal(!profile.ready);
+      setShowModal(!profile.ready);
       return () => {
         console.log("MatchScreen unfocused");
       };
@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
   arrowContainer: {
     width: 50,

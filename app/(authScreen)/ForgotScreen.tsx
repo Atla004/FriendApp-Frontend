@@ -46,8 +46,7 @@ const ForgotScreen = () => {
   };
 
   return (
-    <>
-      <StatusBar style="light" />
+    
       <>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.card}>
@@ -77,7 +76,6 @@ const ForgotScreen = () => {
           </View>
         </ScrollView>
       </>
-    </>
   );
 };
 
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#1f2937",
     borderRadius: 12,
     padding: 24,
     marginHorizontal: 16,
@@ -114,11 +112,11 @@ const styles = StyleSheet.create({
     height: 100,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontSize: 40,
+    color: "white",
     marginBottom: 24,
     textAlign: "center",
+    fontFamily: "Dancing",
   },
   input: {
     width: "100%",
@@ -128,9 +126,10 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
     fontSize: 16,
+    color: "white",
   },
   resetButton: {
-    backgroundColor: "#ef4444",
+    backgroundColor: "#5b4dd6",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 24,

@@ -76,11 +76,7 @@ const RestartPasswordScreen = () => {
 
   return (
     <>
-      <StatusBar style="light" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoid}
-      >
+      <>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.card}>
 
@@ -110,7 +106,7 @@ const RestartPasswordScreen = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </>
     </>
   );
 };
@@ -127,7 +123,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#1f2937",
     borderRadius: 12,
     padding: 24,
     marginHorizontal: 16,
@@ -148,11 +144,11 @@ const styles = StyleSheet.create({
     height: 100,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontSize: 40,
+    color: "white",
     marginBottom: 24,
     textAlign: "center",
+    fontFamily: "Dancing",
   },
   restartButton: {
     backgroundColor: "#ef4444",

@@ -9,12 +9,13 @@
     "web": "expo start --web"
   },
   "dependencies": {
-
     "@expo/vector-icons": "^14.0.2",
     "@flyerhq/react-native-chat-ui": "^1.4.3",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/datetimepicker": "8.2.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
+    "@supabase/supabase-js": "^2.47.3",
     "expo": "~52.0.17",
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
@@ -34,23 +35,14 @@
     "react-native-screens": "~4.1.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "zod": "^3.23.8",
-    "@react-native-community/datetimepicker": "8.2.0",
-    "@supabase/supabase-js": "^2.47.3"
-
-
-
+    "socket.io-client": "^4.8.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.3.12",
+    "@types/socket.io-client": "^1.4.36",
     "typescript": "^5.3.3"
   },
   "private": true
 }
-
-
-
-
-
-
