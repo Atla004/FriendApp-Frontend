@@ -39,7 +39,7 @@ const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
 const ProfileScreen = () => {
   const { profile, updateProfile } = useProfileContext();
   const { _id,email} = useUserData();
-  const { token } = useUserData();
+  const { token, username } = useUserData();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -246,7 +246,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.section}>
-          <Text style={styles.name}>{profileChanges.full_name}</Text>
+          <Text style={styles.name}>{username}</Text>
         </View>
 
         <View style={styles.section}>

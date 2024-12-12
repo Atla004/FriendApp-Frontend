@@ -49,15 +49,25 @@ export default function MessageScreen() {
   const [messages, setMessages] = useState<DUMMY_MESSAGES[]>(DUMMY_MESSAGES);
   const flatListRef = useRef<FlatList>(null);
   const { chat_id } = useLocalSearchParams()
-  const { token } = useUserData()
+  const { token, username } = useUserData()
 
   useEffect(() => {
 
   }, []);
 
   joinChat(chat_id as string)
-  socket.on('message', (content: string, username: string, chat_id: string) => {
-    console.log("Message: ",{content, username, chat_id});
+  socket.on('message', (content: string, type: string, got_username: string, chat_id: string, datetime: string) => {
+    console.log("Message: ",{content, type, username: got_username, chat_id});
+    const recievedMessage = {
+      id: Date.now().toString(),
+      timestamp: new Date(datetime),
+      isMine: false
+    } 
+    if (got_username === username)
+      return;
+
+    const messageContent = type === "text" ? { text: content } : { text: "", image: content }
+    setMessages([...messages, { ...recievedMessage, ...messageContent }])
   })
 
   const handleSend = (text: string) => {
@@ -67,8 +77,13 @@ export default function MessageScreen() {
       timestamp: new Date(),
       isMine: true,
     };
-    postTextMessage(token as string, chat_id as string, text).then(() => {
+    postTextMessage(token as string, chat_id as string, text)
+    .then(() => {
       setMessages([...messages, newMessage]);
+    })
+    .catch((error) => {
+      console.error("Error sending message")
+      console.error(error)
     })
   };
 
@@ -86,8 +101,13 @@ export default function MessageScreen() {
         timestamp: new Date(),
         isMine: true,
       };
-      postImageMessage(token as string, chat_id as string, result.assets[0].uri).then(() => {
+      postImageMessage(token as string, chat_id as string, result.assets[0].uri)
+      .then(() => {
         setMessages([...messages, newMessage]);
+      })
+      .catch((error) => {
+        console.error("Error sending message")
+        console.error(error)  
       })
     }
   };

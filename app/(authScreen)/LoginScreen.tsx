@@ -132,7 +132,7 @@ export const LoginScreen = () => {
           email: data.data.email,
           token: parsedUser.token,
         });
-        router.push("/HomeScreen");
+        router.push("/MatchScreen");
       }
     } catch (error) {
       console.log("Error during auto login", error);
