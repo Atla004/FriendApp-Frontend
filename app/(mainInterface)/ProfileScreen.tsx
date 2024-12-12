@@ -74,19 +74,21 @@ const ProfileScreen = () => {
     useState<PasswordChangeModalProps>({
       visible: false,
       onClose: () => {
-        setPasswordModalProps({ ...passwordModalProps, visible: false });
+        setPasswordModalProps(prev => ({ ...prev, visible: false }));
       },
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
       setCurrentPassword: (text: string) => {
-        setPasswordModalProps({ ...passwordModalProps, currentPassword: text });
+        console.log(text);
+        console.log({ ...passwordModalProps, currentPassword: text});
+        setPasswordModalProps(prev => ({ ...prev, currentPassword: text }));
       },
       setNewPassword: (text: string) => {
-        setPasswordModalProps({ ...passwordModalProps, newPassword: text });
+        setPasswordModalProps(prev => ({ ...prev, newPassword: text }));
       },
       setConfirmPassword: (text: string) => {
-        setPasswordModalProps({ ...passwordModalProps, confirmPassword: text });
+        setPasswordModalProps(prev => ({ ...prev,confirmPassword: text }));
       },
       onChange: () => handleOnChangePassword(),
     });
@@ -95,11 +97,11 @@ const ProfileScreen = () => {
     {
       visible: false,
       onClose: () => {
-        setEmailModalProps({ ...emailModalProps, visible: false });
+        setEmailModalProps(prev => ({ ...prev, visible: false }));
       },
       newEmail: "",
       setNewEmail: (text: string) => {
-        setEmailModalProps({ ...emailModalProps, newEmail: text });
+        setEmailModalProps(prev => ({ ...prev, newEmail: text }));
       },
       onChange: () => handleOnChangeEmail(),
     }
@@ -109,20 +111,20 @@ const ProfileScreen = () => {
     useState<DeleteAccountModalProps>({
       visible: false,
       onClose: () => {
-        setDeleteAccountModalProps({
-          ...deleteAccountModalProps,
-          visible: false,
-        });
+        setDeleteAccountModalProps(prev => ({ ...prev, visible: false }));
       },
       deleteConfirmation: "",
       setDeleteConfirmation: (text: string) => {
-        setDeleteAccountModalProps({
-          ...deleteAccountModalProps,
-          deleteConfirmation: text,
-        });
+        setDeleteAccountModalProps(prev => ({ ...prev, deleteConfirmation: text }));
       },
       onDelete: () => handleOnDelete(),
     });
+
+
+  useEffect(() => {
+    console.log("Password modal props changed", passwordModalProps.visible);
+  }
+  , [passwordModalProps]);
 
   const handleOnDelete = () => {
     if (deleteAccountModalProps.deleteConfirmation.toLowerCase() !== "delete") {
@@ -143,10 +145,6 @@ const ProfileScreen = () => {
       router.dismissAll();
       router.replace("/LoginScreen");
     });
-  };
-
-  const handleOnChangeEmail = () => {
-    // Implement onChange email functionality here
   };
 
   const handleOnChangePassword = () => {
@@ -188,6 +186,10 @@ const ProfileScreen = () => {
       ]);
     });
   };
+
+  const handleOnChangeEmail = () => {
+  };
+
 
   useEffect(() => {}, [profileChanges]);
 
