@@ -15,7 +15,8 @@ import { MessageComponent } from "@/components/MessageComponent";
 import { SendMessageComponent } from "@/components/SendMessageComponent";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { joinChat, socket } from "@/utils/socket";
 
 
 interface DUMMY_MESSAGES {
@@ -45,10 +46,16 @@ const DUMMY_MESSAGES = [
 export default function MessageScreen() {
   const [messages, setMessages] = useState<DUMMY_MESSAGES[]>(DUMMY_MESSAGES);
   const flatListRef = useRef<FlatList>(null);
+  const { chat_id } = useLocalSearchParams()
 
   useEffect(() => {
 
   }, []);
+
+  joinChat(chat_id as string)
+  socket.on('message', (content: string, username: string, chat_id: string) => {
+    console.log("Message: ",{content, username, chat_id});
+  })
 
   const handleSend = (text: string) => {
     const newMessage = {

@@ -4,6 +4,7 @@ import { ChatSection } from "@/components/ChatSection";
 import { useState, useEffect } from "react";
 import { GetChatsResponse } from "@/schemas/responses";
 import { Chat } from "@/schemas/types";
+import { socket } from "@/utils/socket";
 
 const data: GetChatsResponse = {
   success: "Found Chats!",
@@ -33,7 +34,9 @@ export default function ChatScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
 
-
+  socket.on('message', (content: string, username: string, chat_id: string) => {
+    console.log("Message: ",{content, username, chat_id});
+  })
 
   const transformToChats = (response: GetChatsResponse): Chat[] => {
     return response.data.map(chat => ({
@@ -87,7 +90,7 @@ export default function ChatScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/(chatInterface)/MessageScreen",
-                  params: { userId: item._id },
+                  params: { chat_id: item._id },
                 })
               }
             />

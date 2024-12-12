@@ -1,23 +1,13 @@
 import io, { Socket  } from 'socket.io-client';
 
+const SocketServerUrl = process.env.EXPO_PUBLIC_WS_URL as string
 
-const socket = io('http://your-socket-server-url');
+export const socket = io(SocketServerUrl);
 
-socket.on('message', (message: string) => {
-    console.log('New message received:', message);
-});
-
-
-function initializeSocket(url: string) {
-    return io(url);
+export const joinChat = (chat_id: string) => {
+    socket.send('join', chat_id)
 }
 
-function closeSocket(socket: SocketIOClient.Socket) {
-    socket.close();
+export const joinNotificationsRoom = (user_id: string) => {
+    socket.send('join-self', user_id)
 }
-
-function sendMessage(socket: SocketIOClient.Socket, message: string) {
-    socket.emit('message', { text: message });
-}
-
-export { initializeSocket, closeSocket, sendMessage };

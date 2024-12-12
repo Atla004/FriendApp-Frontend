@@ -1,7 +1,15 @@
 import { Tabs } from "expo-router";
 import { StyleSheet, View, Image } from "react-native";
+import { joinNotificationsRoom, socket } from "@/utils/socket";
+import { useUserData } from "@/context/UserDataContext";
 
 export default function Layout() {
+  const userContext = useUserData()
+  joinNotificationsRoom(userContext._id as string);
+  socket.on('match', (username: string) => {
+    console.log(`match with ${username}`)
+  })
+
   return (
     <View style={styles.tabsContainer}>
       <Tabs
