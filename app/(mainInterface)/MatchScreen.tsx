@@ -12,7 +12,8 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { PersonCard } from "@/components/PersonCard";
 import { getMatchData, postLike } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
-import { User } from "@/schemas/types";
+
+const pathToImage = "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
 const SWIPE_THRESHOLD = 120;
 
 interface Match {
@@ -178,7 +179,7 @@ export default function MatchScreen() {
         style={[styles.card, getCardStyle()]}
         {...panResponder.panHandlers}
       >
-        <PersonCard name={personName} imageUrl={personImageUrl} />
+        <PersonCard name={personName} imageUrl={`${pathToImage}${personImageUrl}`} />
       </Animated.View>
     </View>
   );
