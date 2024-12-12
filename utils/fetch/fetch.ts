@@ -257,7 +257,49 @@ const getMatchData = async ( token: string, page: number= 1) => {
   }
 }
 
+const postTextMessage = async (token: string, chat: string, content: string) => {
+  try {
+    const response = await fetch (`${backendUrl}/messages/message/`, {
+        method: "POST",
+        headers: {
+            'Content-Type': "Application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            chat,
+            content,
+            type: "text"
+        })
+    })
+    const json = await response.json()
+    return json.data
+  }
+  catch (error) {
+      console.error(error)
+  }
+}
 
+const postImageMessage = async (token: string, chat: string, content: string) => {
+  try {
+    const response = await fetch (`${backendUrl}/messages/message/`, {
+        method: "POST",
+        headers: {
+            'Content-Type': "Application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            chat,
+            content,
+            type: "image"
+        })
+    })
+    const json = await response.json()
+    return json.data
+  }
+  catch (error) {
+      console.error(error)
+  }
+}
 
 export {
   getMatchData,
@@ -270,4 +312,6 @@ export {
   updateProfileData,
   fetchLogin,
   fetchRegister,
+  postTextMessage,
+  postImageMessage
 };
