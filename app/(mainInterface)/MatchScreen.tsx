@@ -24,7 +24,7 @@ interface Match {
 export default function MatchScreen() {
   const router = useRouter();
   const { profile } = useProfileContext();
-  const { _id, token } = useUserData();
+  const {  token } = useUserData();
   const [showModal, setShowModal] = useState(false);
   const position = useRef(new Animated.ValueXY()).current;
   const [currentIndex, setCurrentIndex] = useState(0);
