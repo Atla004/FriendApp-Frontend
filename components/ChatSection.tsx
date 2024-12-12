@@ -7,11 +7,13 @@ interface ChatSectionProps {
     photo: string | null;
     timestamp: Date | null;
     lastMessageName: string;
+    type: "text" | "image";
   };
   onPress: () => void;
 }
 
 export function ChatSection({ chat, onPress }: ChatSectionProps) {
+  console.log(chat);
   const spanMessage = chat.lastMessage.length > 10 ? chat.lastMessage.slice(0, 10) + "..." : chat.lastMessage;
   const spanName = chat.name.length > 10 ? chat.name.slice(0, 10) + "..." : chat.name;
   const preview = chat.lastMessageName? spanName + ": " + spanMessage: "no messages yet";
@@ -33,7 +35,7 @@ export function ChatSection({ chat, onPress }: ChatSectionProps) {
           </Text>
         </View>
         <Text style={styles.message} numberOfLines={1}>
-          {preview}
+          {chat.type === "image" ? "📷 Image" : preview}
         </Text>
       </View>
     </TouchableOpacity>

@@ -24,12 +24,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile>({
     ready: false,
     photo: null,
-    bio: "A veces pienso en que hacer con mi vida",
+    bio: "",
     gender: null,
     birthDate: null,
     email: '',
     country: '6759e641c14dec93250d8190',
-    full_name: 'atlas'
+    full_name: ''
   });
 
   const updateProfile = (updates: Partial<Profile>) => {

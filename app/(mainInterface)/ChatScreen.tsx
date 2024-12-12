@@ -2,13 +2,36 @@ import { View, StyleSheet, TextInput, FlatList, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { ChatSection } from "@/components/ChatSection";
 import { useState, useEffect } from "react";
-import { GetChatsResponse } from "@/schemas/responses";
 import { Chat } from "@/schemas/types";
 import { socket } from "@/utils/socket";
 import { getChats } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
+import { GetChatsResponse } from "@/schemas/responses";
 
-
+const data: GetChatsResponse = {
+  success: "Found Chats!",
+  data: [
+    {
+      _id: "67561f39a2fb58994b566dee",
+      user_id: "67560c703f1af4b512279772",
+      user: "chantyuwu",
+      photo: "/public/el_dolar-1734016293288.jpg",
+      last_message: {
+        content: "Welcome!",
+        datetime_sent: "2024-12-12T00:16:50.716Z",
+        author: "el_atla",
+        type: "text",
+      },
+    },
+    {
+      _id: "675afddec74fea6958ae5e24",
+      user_id: "675a331e098fce11ff954135",
+      user: "atlas",
+      photo: "/public/atlas-1734013616323.jpg",
+      last_message: null,
+    },
+  ],
+};
 
 const pathToImage =
   "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
@@ -19,14 +42,43 @@ export default function ChatScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
 
-  socket.on("message", (content: string, username: string, chat_id: string) => {
-    console.log("Message: ", { content, username, chat_id });
-  });
+  socket.on(
+    "message",
+    (
+      content: string,
+      type: "text" | "image",
+      username: string,
+      chat_id: string,
+      datetime_sent: string
+    ) => {
+      console.log("Message: ", {
+        content,
+        username,
+        chat_id,
+        type,
+        datetime_sent,
+      });
+      setChats((prevChats) => {
+        const chatIndex = prevChats.findIndex((chat) => chat._id === chat_id);
+        if (chatIndex !== -1) {
+          const newChats = [...prevChats];
+          newChats[chatIndex].last_message = {
+            content,
+            type,
+            datetime_sent,
+            author: username,
+          };
+          return newChats;
+        }
+        return prevChats;
+      });
+    }
+  );
+  
 
   useEffect(() => {
     getChats(token as string, setChats);
   }, []);
-
 
   const filteredChats = chats.filter((chat) =>
     chat.user.toLowerCase().includes(searchQuery.toLowerCase())
@@ -61,6 +113,7 @@ export default function ChatScreen() {
                 lastMessageName: item.last_message
                   ? item.last_message.author
                   : "",
+                type: item.last_message ? item.last_message.type : "text",
               }}
               onPress={() =>
                 router.push({
@@ -76,6 +129,7 @@ export default function ChatScreen() {
           <Text style={styles.notFoundText}>
             {searchQuery ? "not found" : "you don't have chats yet"}
           </Text>
+          .
         </View>
       )}
     </View>

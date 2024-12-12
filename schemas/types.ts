@@ -26,6 +26,7 @@ const lastMessageSchema = z.object({
   datetime_sent: z.string(),
   content: z.string(),
   author: z.string(),
+  type: z.enum(['text', 'image'])
 });
 
 const ChatSchema = z.object({
