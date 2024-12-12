@@ -1,23 +1,24 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface SnackbarSaveChangesProps {
-  setHasChanges: (value: boolean) => void;
+  saveChanges: () => void;
+  discardChanges: () => void;
 }
 
-const SnackbarSaveChanges = ({setHasChanges}: SnackbarSaveChangesProps) => {
+const SnackbarSaveChanges = ({saveChanges,discardChanges}: SnackbarSaveChangesProps) => {
   return (
     <View style={styles.snackbar}>
       <Text style={styles.snackbarText}>You have unsaved changes</Text>
       <View style={styles.snackbarButtons}>
         <TouchableOpacity
           style={styles.snackbarButton}
-          onPress={() => setHasChanges(false)}
+          onPress={() => discardChanges()}
         >
           <Text style={styles.snackbarButtonText}>Reset</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.snackbarButton, styles.snackbarButtonPrimary]}
-          onPress={() => setHasChanges(false)}
+          onPress={() => saveChanges()}
         >
           <Text
             style={[

@@ -63,21 +63,21 @@ export const LoginScreen = () => {
         token: data.data.token,
       });
       
-      const d = typeof profile
+      updateProfile({  
+        photo: data.data.user.info?.photos ? data.data.user.info.photos : null,
+        bio: data.data.user.info?.bio ,
+        gender: data.data.user.info?.gender ,
+        email: data.data.user.email,
+        full_name: data.data.user.username,
+        country: data.data.user.info?.country 
+      });
 
-
-
-
-      router.push("/MatchScreen");
-      
-      
-      
-      
       if (staySignedIn) {
-        await AsyncStorage.setItem("user", JSON.stringify(data.data));
+        await AsyncStorage.setItem("user", JSON.stringify(data.data.token));
         console.log("User data saved in localStorage");
       }
-      
+
+      router.push("/MatchScreen");      
       return 
 
     } catch (error) {
@@ -109,7 +109,7 @@ export const LoginScreen = () => {
         );
 
         const response = await fetch(
-          `${backendUrl}/api/user/${parsedUser.user._id}`,
+          `${backendUrl}/user/${parsedUser.user._id}`,
           {
             method: "GET",
             headers: {

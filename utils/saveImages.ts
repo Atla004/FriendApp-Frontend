@@ -1,9 +1,8 @@
 import { Alert } from "react-native";
 import { uploadFile } from "./supabaseClient";
 
-const user= 'atlas'
 
-export async function uploadAvatar(image: any) {
+export async function uploadAvatar(image: any, user: string) {
   try {
 
     if (!image.uri) {
@@ -24,6 +23,7 @@ export async function uploadAvatar(image: any) {
 
 
   } catch (error) {
+    return '';
 
   }
 }

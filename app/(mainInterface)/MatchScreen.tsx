@@ -50,6 +50,7 @@ export default function MatchScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("MatchScreen focused profile", profile);
       console.log("profile.ready", profile.ready);
       setCurrentIndex(0);
       setShowModal(!profile.ready);
@@ -171,7 +172,6 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    backgroundColor: "red",
     alignItems: "center",
   },
   cardContent: {

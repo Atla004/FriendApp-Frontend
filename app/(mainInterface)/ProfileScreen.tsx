@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -15,37 +15,55 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useProfileContext } from "@/context/ProfileContext";
-import PasswordChangeModal, { PasswordChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/PasswordChangeModal";
-import EmailChangeModal, { EmailChangeModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/EmailChangeModal";
-import DeleteAccountModal, { DeleteAccountModalProps } from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
+import { Profile, useProfileContext } from "@/context/ProfileContext";
+import PasswordChangeModal, {
+  PasswordChangeModalProps,
+} from "@/components/mainInterfaceComponents/ProfileScreenComponents/PasswordChangeModal";
+import EmailChangeModal, {
+  EmailChangeModalProps,
+} from "@/components/mainInterfaceComponents/ProfileScreenComponents/EmailChangeModal";
+import DeleteAccountModal, {
+  DeleteAccountModalProps,
+} from "@/components/mainInterfaceComponents/ProfileScreenComponents/DeleteAccountModal";
 import SnackbarSaveChanges from "@/components/mainInterfaceComponents/ProfileScreenComponents/SnackbarSaveChanges";
 import { uploadAvatar } from "@/utils/saveImages";
+import { updateProfileData } from "@/utils/fetch/fetch";
+import { useUserData } from "@/context/UserDataContext";
 
+const pathToImage = "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
 
-
-const profile = {
-  "_id": "51823ba3421324234",
-  "username": "el_atla",
-  "info": {
-      "full_name": "Atlina garcia",
-      "bio": "insert bio",
-      "gender": "male",
-      "birthdate": "2004-08-18T00:00:00",
-      "country": {
-          "_id": "9123749127b9187239826234",
-          "name": "Venezuela"
-      },
-      "photos": [
-          "https://is.zobj.net/image-server/v1/images?r=gYzSI8o-5BkyuE3rfiUbjlO7pVEZ7mXOSR8_nAL7nqyBa8TDqTG78W-JAeNfF1zbGX8uDf-d6oxuy9AUd1atyEOp7wGz5CAx2eHa7lYmukuwxUnHoYxazo3MAayebFTB12tPi85-9L3iOwZ5qX2qYn9hPJaWodjPNT2CjvBSCXt8mETRR9kLLZL7O3GZbOjjkKtoIcnw37rWAaicgyAMkdaex4kgrjSctoeXlA"
-      ]
-  }
-}
-
-const  ProfileScreen=()=> {
+const ProfileScreen = () => {
   const { profile, updateProfile } = useProfileContext();
+  const { token } = useUserData();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      updateProfileData(
+        {
+          photos: profile?.photo || [],
+          bio: profile?.bio || "",
+          gender: profile?.gender || "",
+          birthdate: profile?.birthDate || null,
+          country: profile?.country || "",
+          full_name: profile?.full_name || "",
+        },
+        token
+      );
+    }
+  }, [profile]);
+
+  const [profileChanges, setProfileChanges] = useState<Profile>({
+    ready: profile?.ready || false,
+    photo: profile?.photo || null,
+    bio: profile?.bio || null,
+    gender: profile?.gender || null,
+    birthDate: profile?.birthDate || null,
+    email: profile?.email || "",
+    country: profile?.country || "",
+    full_name: profile?.full_name || "",
+  });
 
   const [passwordModalProps, setPasswordModalProps] =
     useState<PasswordChangeModalProps>({
@@ -68,10 +86,6 @@ const  ProfileScreen=()=> {
       onChange: () => handleOnChangePassword(),
     });
 
-  console.log(
-    "ProfileScreen password modal visible",
-    passwordModalProps.visible
-  );
   const [emailModalProps, setEmailModalProps] = useState<EmailChangeModalProps>(
     {
       visible: false,
@@ -121,6 +135,8 @@ const  ProfileScreen=()=> {
     // Implement logout functionality here
   };
 
+  useEffect(() => {}, [profileChanges]);
+
   const colorScheme = Appearance.getColorScheme();
 
   const pickImage = async () => {
@@ -133,18 +149,41 @@ const  ProfileScreen=()=> {
 
     if (!result.canceled) {
       const image = result.assets[0];
-      uploadAvatar(image);
-      updateProfile({ photo: result.assets[0].uri });
+      const path = await uploadAvatar(image,profileChanges.full_name || "");
+      setProfileChanges({ ...profileChanges,photo: [path] });
       setHasChanges(true);
     }
+  };
+
+  const saveChanges = () => {
+    updateProfile(profileChanges);
+
+    setHasChanges(false);
+  };
+
+  const discardChanges = () => {
+    setProfileChanges({
+      ready: profile?.ready || false,
+      photo: profile?.photo || null,
+      bio: profile?.bio || null,
+      gender: profile?.gender || null,
+      birthDate: profile?.birthDate || null,
+      email: profile?.email || "",
+      country: profile?.country || "",
+      full_name: profile?.full_name || "",
+    });
+    setHasChanges(false);
   };
 
   return (
     <>
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.photoContainer} onPress={pickImage}>
-          {profile.photo ? (
-            <Image source={{ uri: profile.photo }} style={styles.photo} />
+          {profileChanges.photo ? (
+            <Image
+              source={{ uri: `${pathToImage}${profileChanges.photo[0]}` }}
+              style={styles.photo}
+            />
           ) : (
             <View style={styles.photoPlaceholder}>
               <Ionicons name="camera" size={40} color="#666" />
@@ -153,7 +192,7 @@ const  ProfileScreen=()=> {
         </TouchableOpacity>
 
         <View style={styles.section}>
-          <Text style={styles.name}>Juan</Text>
+          <Text style={styles.name}>{profileChanges.full_name}</Text>
         </View>
 
         <View style={styles.section}>
@@ -162,9 +201,9 @@ const  ProfileScreen=()=> {
             style={styles.input}
             multiline
             numberOfLines={4}
-            value={profile.bio || ""}
+            value={profileChanges.bio || ""}
             onChangeText={(text) => {
-              updateProfile({ bio: text });
+              setProfileChanges({ ...profileChanges, bio: text });
               setHasChanges(true);
             }}
             placeholder="Tell us about yourself..."
@@ -180,17 +219,18 @@ const  ProfileScreen=()=> {
                 key={gender}
                 style={[
                   styles.genderButton,
-                  profile.gender === gender && styles.genderButtonActive,
+                  profileChanges.gender === gender && styles.genderButtonActive,
                 ]}
                 onPress={() => {
-                  updateProfile({ gender });
+                  setProfileChanges({ ...profileChanges, gender });
                   setHasChanges(true);
                 }}
               >
                 <Text
                   style={[
                     styles.genderButtonText,
-                    profile.gender === gender && styles.genderButtonTextActive,
+                    profileChanges.gender === gender &&
+                      styles.genderButtonTextActive,
                   ]}
                 >
                   {gender}
@@ -206,8 +246,8 @@ const  ProfileScreen=()=> {
         >
           <Text style={styles.label}>Birth Date</Text>
           <Text style={styles.value}>
-            {profile.birthDate
-              ? profile.birthDate.toLocaleDateString()
+            {profileChanges.birthDate
+              ? profileChanges.birthDate.toLocaleDateString()
               : "Select date"}
           </Text>
         </TouchableOpacity>
@@ -258,13 +298,13 @@ const  ProfileScreen=()=> {
             ]}
           >
             <DateTimePicker
-              value={profile.birthDate || new Date()}
+              value={profileChanges.birthDate || new Date()}
               mode="date"
               display="spinner"
               onChange={(event: any, date: Date | undefined) => {
                 setShowDatePicker(false);
                 if (date) {
-                  updateProfile({ birthDate: date });
+                  setProfileChanges({ ...profileChanges, birthDate: date });
                   setHasChanges(true);
                 }
               }}
@@ -276,10 +316,15 @@ const  ProfileScreen=()=> {
         <EmailChangeModal {...emailModalProps} />
         <DeleteAccountModal {...deleteAccountModalProps} />
       </ScrollView>
-      {hasChanges && <SnackbarSaveChanges setHasChanges={setHasChanges} />}
+      {hasChanges && (
+        <SnackbarSaveChanges
+          saveChanges={saveChanges}
+          discardChanges={discardChanges}
+        />
+      )}
     </>
   );
-}
+};
 
 export default ProfileScreen;
 
