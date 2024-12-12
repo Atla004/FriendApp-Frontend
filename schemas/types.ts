@@ -49,7 +49,7 @@ const MessageSchema = z.object({
   content: z.string().max(512),
   chat: z.string(), 
   author: z.string(), 
-  datetimeSent: z.date()
+  datetime_sent: z.date()
 });
 
 type UserInfo = z.infer<typeof UserInfoSchema>;

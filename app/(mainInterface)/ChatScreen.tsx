@@ -92,7 +92,7 @@ export default function ChatScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/(chatInterface)/MessageScreen",
-                  params: { chat_id: item._id },
+                  params: { chat_id: item._id, other_username: item.user },
                 })
               }
             />

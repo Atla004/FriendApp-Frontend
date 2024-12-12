@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { joinChat, socket } from "@/utils/socket";
-import { postImageMessage, postTextMessage } from "@/utils/fetch/fetch";
+import { getMessage, postImageMessage, postTextMessage } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
 
 
@@ -29,30 +29,14 @@ interface DUMMY_MESSAGES {
   image?: string;
 }
 
-const DUMMY_MESSAGES = [
-  {
-    id: "1",
-    text: "Hey there!",
-    timestamp: new Date(),
-    isMine: false,
-  },
-  {
-    id: "2",
-    text: "Hi! How are you?",
-    timestamp: new Date(),
-    isMine: true,
-  },
-  // Add more dummy messages as needed
-];
-
 export default function MessageScreen() {
-  const [messages, setMessages] = useState<DUMMY_MESSAGES[]>(DUMMY_MESSAGES);
+  const [messages, setMessages] = useState<DUMMY_MESSAGES[]>([]);
   const flatListRef = useRef<FlatList>(null);
-  const { chat_id } = useLocalSearchParams()
-  const { token, username } = useUserData()
+  const { chat_id, other_username } = useLocalSearchParams()
+  const { token, username, _id } = useUserData()
 
   useEffect(() => {
-
+    getMessage(chat_id as string, token as string, setMessages, _id as string)
   }, []);
 
   joinChat(chat_id as string)
@@ -134,7 +118,7 @@ export default function MessageScreen() {
               source={{ uri: "https://example.com/profile.jpg" }}
               style={styles.profileImage}
             />
-            <Text style={styles.profileName}>User Name</Text>
+            <Text style={styles.profileName}>{other_username as string}</Text>
           </TouchableOpacity>
       </View>
 

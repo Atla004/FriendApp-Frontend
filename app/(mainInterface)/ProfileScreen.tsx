@@ -177,7 +177,7 @@ const ProfileScreen = () => {
 
   const handleLogout = () => {
     AsyncStorage.removeItem("user").then(() => {
-      Alert.alert("Goodbye, Trainer!", "You have been logged out.", [
+      Alert.alert("Goodbye!", "You have been logged out.", [
         {
           text: "OK",
           onPress: () => {

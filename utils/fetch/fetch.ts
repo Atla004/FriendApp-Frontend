@@ -6,6 +6,7 @@ import {
   RegisterResponse,
   registerResponseSchema,
 } from "@/schemas/responses";
+import { Message } from "@/schemas/types";
 import { string } from "zod";
 
 const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
@@ -172,25 +173,33 @@ const postMessage = async (data: any, token: string, setToast: any) => {
   }
 };
 
-const getMessage = async (
+const getMessages = async (
   chatId: string,
   token: string,
   setMessages: any,
-  setToast: any
+  selfId: string
 ) => {
   try {
-    const response = await fetch(`${backendUrl}/api/chat/message/${chatId}`, {
+    const response = await fetch(`${backendUrl}/messages/chat/${chatId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
-    console.log({ data });
-    setMessages(data.data);
+    console.log("#".repeat(15))
+    console.log(JSON.stringify(data, null, 2));
+    console.log("#".repeat(15))
+    const formattedData = data.data.map((msg: Message) => ({
+      id: msg._id,
+      timestamp: new Date(msg.datetime_sent),
+      isMine: msg.author === selfId,
+      text: msg.type === 'text' ? msg.content : "",
+      image: msg.type === 'image' ? msg.content : undefined
+    }))
+    setMessages(formattedData);
   } catch (error) {
     console.error(error);
-    setToast("Error getting message data", true, 3000);
   }
 };
 
@@ -305,7 +314,7 @@ export {
   postLike,
   getChats,
   postMessage,
-  getMessage,
+  getMessages as getMessage,
   getToken,
   getProfileData,
   updateProfileData,
