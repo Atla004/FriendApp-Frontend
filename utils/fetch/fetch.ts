@@ -139,6 +139,7 @@ const postLike = async (token: string, target: any) => {
 
 const getChats = async (token: string, setChats: any) => {
   try {
+    console.log("Fetching chats");
     const response = await fetch(`${backendUrl}/messages/chats`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -146,7 +147,6 @@ const getChats = async (token: string, setChats: any) => {
       },
     });
     const data = await response.json();
-    console.log({ data });
     setChats(data.data);
   } catch (error) {
     console.error(error);

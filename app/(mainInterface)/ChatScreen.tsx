@@ -16,47 +16,56 @@ export default function ChatScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
 
-  socket.on(
-    "message",
-    (
-      content: string,
-      type: "text" | "image",
-      username: string,
-      chat_id: string,
-      datetime_sent: string
-    ) => {
-      console.log("recibidest jun mensajesl vboob maosdfjsdlfkasjdflksdfjla;ksdfj");
-      console.log("Message: ", {
-        content,
-        username,
-        chat_id,
-        type,
-        datetime_sent,
-      });
-      setChats((prevChats) => {
-        const chatIndex = prevChats.findIndex((chat) => chat._id === chat_id);
-        if (chatIndex !== -1) {
-          const newChats = [...prevChats];
-          newChats[chatIndex].last_message = {
-            content,
-            type,
-            datetime_sent,
-            author: username,
-          };
-          return newChats;
-        }
-        return prevChats;
-      });
-    }
-  );
-
   useEffect(() => {
     getChats(token as string, setChats);
+
+    socket.on("match", (username: string) => {
+      console.log("match event" ,setChats);
+      console.log(`match with ${username}`);
+      getChats(token as string, setChats);
+    });
+
+    socket.on(
+      "message",
+      (
+        content: string,
+        type: "text" | "image",
+        username: string,
+        chat_id: string,
+        datetime_sent: string
+      ) => {
+        console.log(
+          "recibidest jun mensajesl vboob maosdfjsdlfkasjdflksdfjla;ksdfj"
+        );
+        console.log("Message: ", {
+          content,
+          username,
+          chat_id,
+          type,
+          datetime_sent,
+        });
+        setChats((prevChats) => {
+          const chatIndex = prevChats.findIndex((chat) => chat._id === chat_id);
+          if (chatIndex !== -1) {
+            const newChats = [...prevChats];
+            newChats[chatIndex].last_message = {
+              content,
+              type,
+              datetime_sent,
+              author: username,
+            };
+            return newChats;
+          }
+          return prevChats;
+        });
+      }
+    );
   }, []);
 
-  const filteredChats = chats.filter((chat) =>
+  const filteredChats = chats?.filter((chat) =>
     chat.user.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   console.log(filteredChats.length);
 
   return (
