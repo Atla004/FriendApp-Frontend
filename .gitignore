@@ -37,6 +37,7 @@ yarn-error.*
 
 # build
 eas.json
+
 easbackup.json
 
 android/

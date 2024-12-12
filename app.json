@@ -8,14 +8,14 @@
     "userInterfaceStyle": "light",
     "icon": "./assets/TLASNotepad-icon.png",
     "splash": {
-      "image": "./assets/tlaslogo.png",
+      "image": "./assets/friendapp.png",
       "resizeMode": "contain",
-      "backgroundColor": "#EBEBD3"
+      "backgroundColor": "#190626"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/TLASNotepad-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/friendapp.png",
+        "backgroundColor": "#190626"
       },
       "package": "com.atlas004.FriendAppFrontend"
     },
