@@ -29,11 +29,16 @@ import SnackbarSaveChanges from "@/components/mainInterfaceComponents/ProfileScr
 import { uploadAvatar } from "@/utils/saveImages";
 import { updateProfileData } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { validatePassword } from "@/utils/validation";
 
 const pathToImage = "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
+const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
 const ProfileScreen = () => {
   const { profile, updateProfile } = useProfileContext();
+  const { _id,email} = useUserData();
   const { token } = useUserData();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -120,7 +125,24 @@ const ProfileScreen = () => {
     });
 
   const handleOnDelete = () => {
-    // Implement onDelete functionality here
+    if (deleteAccountModalProps.deleteConfirmation.toLowerCase() !== "delete") {
+      Alert.alert("Error", 'Please type "delete" to confirm account deletion');
+      return;
+    }
+    fetch(`${backendUrl}/user/${_id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(() => {
+      Alert.alert(
+        "Goodbye, Trainer!",
+        "Your account has been deleted. We hope to see you again in the future!",
+        [{ text: "OK", onPress: () => deleteAccountModalProps.onClose() }]
+      );
+      router.dismissAll();
+      router.replace("/LoginScreen");
+    });
   };
 
   const handleOnChangeEmail = () => {
@@ -128,11 +150,43 @@ const ProfileScreen = () => {
   };
 
   const handleOnChangePassword = () => {
-    // Implement onChange password functionality here
+    const validation = validatePassword(passwordModalProps.newPassword);
+
+    if (!validation.valid) {
+      Alert.alert("Error", validation.errors?.[0]);
+      return;
+    }
+    if (passwordModalProps.newPassword !== passwordModalProps.confirmPassword) {
+      Alert.alert("Error", "New passwords do not match!");
+      return;
+    }
+    fetch(`${backendUrl}/api/auth/instant-password-change`, {
+      method: "PUT",
+      body: JSON.stringify({ 
+        email: email,
+        newPassword: passwordModalProps.newPassword,
+     }),
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+
+    passwordModalProps.onClose();
   };
 
   const handleLogout = () => {
-    // Implement logout functionality here
+    AsyncStorage.removeItem("user").then(() => {
+      Alert.alert("Goodbye, Trainer!", "You have been logged out.", [
+        {
+          text: "OK",
+          onPress: () => {
+            router.dismissAll();
+            router.replace("/LoginScreen");
+          },
+        },
+      ]);
+    });
   };
 
   useEffect(() => {}, [profileChanges]);
@@ -169,7 +223,7 @@ const ProfileScreen = () => {
       gender: profile?.gender || null,
       birthDate: profile?.birthDate || null,
       email: profile?.email || "",
-      country: profile?.country || "",
+      country: profile?.country || "6759e641c14dec93250d8190",
       full_name: profile?.full_name || "",
     });
     setHasChanges(false);
@@ -214,7 +268,7 @@ const ProfileScreen = () => {
         <View style={styles.section}>
           <Text style={styles.label}>Gender</Text>
           <View style={styles.genderButtons}>
-            {["Male", "Female"].map((gender) => (
+            {["male", "female"].map((gender) => (
               <TouchableOpacity
                 key={gender}
                 style={[

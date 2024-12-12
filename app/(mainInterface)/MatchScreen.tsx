@@ -8,57 +8,73 @@ import {
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useProfileContext } from "@/context/ProfileContext";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { PersonCard } from "@/components/PersonCard";
+import { getMatchData, postLike } from "@/utils/fetch/fetch";
+import { useUserData } from "@/context/UserDataContext";
+import { User } from "@/schemas/types";
 const SWIPE_THRESHOLD = 120;
 
-const MockData = [
-  {
-    id: 1,
-    name: "deb Doe",
-    imageUrl: "https://example.com/johndoe.jpg",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    imageUrl: "https://example.com/janedoe.jpg",
-  },
-  {
-    id: 3,
-    name: "Alice",
-    imageUrl: "https://example.com/alice.jpg",
-  },
-  {
-    id: 4,
-    name: "Bob",
-    imageUrl: "https://example.com/bob.jpg",
-  },
-];
+interface Match {
+  id: string;
+  name: string;
+  imageUrl: string;
+}
 
 export default function MatchScreen() {
   const router = useRouter();
   const { profile } = useProfileContext();
+  const { _id, token } = useUserData();
   const [showModal, setShowModal] = useState(false);
   const position = useRef(new Animated.ValueXY()).current;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [matchData, setMatchData] = useState<Match[]>([]);
+  const next = useRef<string | null>(null);
 
-  const nextPerson = () => {
-    if (currentIndex < MockData.length - 1) {
+  const nextPerson = async() => {
+    if (currentIndex < matchData.length - 1) {
       setCurrentIndex(currentIndex + 1);
+    } else {
+      if (next.current) {
+        await getNewMatchData(token, next.current);
+        setCurrentIndex(0);
+      }
+      await getNewMatchData(token);
+      setCurrentIndex(0);
     }
-  }
+  };
 
   useFocusEffect(
     useCallback(() => {
       console.log("MatchScreen focused profile", profile);
       console.log("profile.ready", profile.ready);
-      setCurrentIndex(0);
       setShowModal(!profile.ready);
+      if (matchData.length === 0 || matchData.length === currentIndex + 1) {
+        getNewMatchData(token);
+      }
+
       return () => {
         console.log("MatchScreen unfocused");
       };
-    }, [])
+    }, [profile])
   );
+
+  const getNewMatchData = async (token: any, page: string= '/api/match/get/1') => {
+    let data
+    // solo agarrar el ultimo numero de "/api/match/get/2" para saber la pagina y ponerlo en numberPage como numero
+    if (page) {
+      
+      const numberPage = parseInt(page.split("/").pop() as string);
+      data = await getMatchData(token, numberPage);
+
+    } else {
+       data = await getMatchData(token);
+    }
+
+    console.log("data", data.data.next);
+    next.current = data.data.next;
+    setMatchData(data.data.people);
+  };
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -81,10 +97,11 @@ export default function MatchScreen() {
       toValue: { x: -500, y: 0 },
       duration: 250,
       useNativeDriver: false,
-    }).start(() => {
-      nextPerson();
+    }).start(async() => {
+      console.log("swipeLeft");
+      postLike(token as string, matchData[currentIndex].id);
+      await nextPerson();
       fromAboveAnimation();
-
     });
   };
 
@@ -93,9 +110,9 @@ export default function MatchScreen() {
       toValue: { x: 600, y: 0 },
       duration: 250,
       useNativeDriver: false,
-    }).start(() => {
+    }).start(async() => {
       console.log("swipeRight");
-      nextPerson();
+      await nextPerson();
       fromAboveAnimation();
     });
   };
@@ -119,7 +136,7 @@ export default function MatchScreen() {
       duration: 250,
       useNativeDriver: false,
     }).start();
-  }
+  };
 
   const getCardStyle = () => {
     const rotate = position.x.interpolate({
@@ -133,6 +150,13 @@ export default function MatchScreen() {
     };
   };
 
+  console.log("currentIndex");
+  const personName = matchData[currentIndex]
+    ? matchData[currentIndex].name
+    : "";
+  const personImageUrl = matchData[currentIndex]
+    ? matchData[currentIndex].imageUrl
+    : "";
   return (
     <View style={styles.container}>
       {showModal && (
@@ -154,7 +178,7 @@ export default function MatchScreen() {
         style={[styles.card, getCardStyle()]}
         {...panResponder.panHandlers}
       >
-        <PersonCard name={MockData[currentIndex].name} imageUrl={MockData[currentIndex].imageUrl} />
+        <PersonCard name={personName} imageUrl={personImageUrl} />
       </Animated.View>
     </View>
   );

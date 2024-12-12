@@ -15,7 +15,7 @@ const UserInfoSchema = z.object({
     message: "Invalid date format",
   }).optional(),
   country: z.string().optional(),
-  photos: z.array(z.string().url()).optional()
+  photos: z.array(z.string()).optional()
 });
 
 export const loginResponseSchema = z.object({

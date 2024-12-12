@@ -16,21 +16,21 @@ interface ProfileContextType {
   updateProfile: (updates: Partial<Profile>) => void;
 }
 
-const defaultProfile: Profile = {
-  ready: false,
-  photo: null,
-  bio: "A veces pienso en que hacer con mi vida",
-  gender: null,
-  birthDate: null,
-  email: '',
-  country: '',
-  full_name: 'atlas'
-};
+
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const [profile, setProfile] = useState<Profile>(defaultProfile);
+  const [profile, setProfile] = useState<Profile>({
+    ready: false,
+    photo: null,
+    bio: "A veces pienso en que hacer con mi vida",
+    gender: null,
+    birthDate: null,
+    email: '',
+    country: '6759e641c14dec93250d8190',
+    full_name: 'atlas'
+  });
 
   const updateProfile = (updates: Partial<Profile>) => {
 
@@ -43,11 +43,15 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         newProfile.photo &&
         newProfile.full_name 
       );
-      console.log('Profile updated', newProfile);
       return newProfile;
     });
 
   };
+
+  useEffect(() => {
+    console.log("Profile context se cambio", profile);
+  }, [profile]);
+
 
   return (
     <ProfileContext.Provider value={{ profile, updateProfile }}>

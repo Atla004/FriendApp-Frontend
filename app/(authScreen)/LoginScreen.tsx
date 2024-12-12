@@ -69,7 +69,8 @@ export const LoginScreen = () => {
         gender: data.data.user.info?.gender ,
         email: data.data.user.email,
         full_name: data.data.user.username,
-        country: data.data.user.info?.country 
+        birthDate: new Date(data.data.user.info?.birthdate || ""),
+        country: "6759e641c14dec93250d8190" 
       });
 
       if (staySignedIn) {
@@ -101,11 +102,12 @@ export const LoginScreen = () => {
   const validateAutoLogin = async () => {
     try {
       const tok = await AsyncStorage.getItem("user");
+      console.log("Token from local storage", tok);
       if (tok) {
         const parsedUser = JSON.parse(tok);
         console.log(
           "User data retrieved from localStorage",
-          parsedUser.user._id
+          parsedUser
         );
 
         const response = await fetch(

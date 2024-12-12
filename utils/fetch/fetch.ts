@@ -6,6 +6,7 @@ import {
   RegisterResponse,
   registerResponseSchema,
 } from "@/schemas/responses";
+import { string } from "zod";
 
 const backendUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
@@ -41,7 +42,8 @@ const fetchLogin = async ({ username, password }: LoginBody) => {
     if (!response.ok) {
       throw new Error((data as any).error as any);
     }
-    console.log("data", data);
+    console.log(JSON.stringify(data, null, 2));
+    
     loginResponseSchema.parse(data);
 
     return data;
@@ -87,21 +89,24 @@ const updateProfileData = async (
   token: string
 ) => {
   try {
-    const response = await fetch(`${backendUrl}/user`, {
+    const body= JSON.stringify({
+      full_name: full_name,
+      bio: bio,
+      gender: gender,
+      birthdate: birthdate?.toString(),
+      country: country,
+      photos: photos,
+    })
+
+    const response = await fetch(`${backendUrl}/user/info`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "Application/json",
       },
-      body: JSON.stringify({
-        full_name: full_name,
-        bio: bio,
-        gender: gender,
-        birthdate: birthdate?.toString(),
-        country: country,
-        photos: photos,
-      }),
+      body
     });
+    console.log(body);
 
     const res = await response.json();
   } catch (error) {
@@ -109,45 +114,25 @@ const updateProfileData = async (
   }
 };
 
-const getMatchData = async (
-  token: string,
-  setMatchData: any,
-  page: number,
-  setToast: any
-) => {
-  try {
-    const response = await fetch(`${backendUrl}/match/get/${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    console.log({ data });
-    setMatchData(data.data);
-  } catch (error) {
-    console.error(error);
-    setToast("Error getting match data", true, 3000);
-  }
-};
 
-const postLike = async (data: any, token: string, setToast: any) => {
+
+const postLike = async (token: string, target: any) => {
   try {
-    const response = await fetch(`${backendUrl}/api/match/like`, {
+    const response = await fetch(`${backendUrl}/match/like`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "Application/json"
       },
-      body: JSON.stringify(data),
-    });
+      body: JSON.stringify({
+          target: target
+      })
+  });
 
     const res = await response.json();
     console.log({ res });
-    setToast("Liked", false, 3000);
   } catch (error) {
     console.error(error);
-    setToast("Error liking", true, 3000);
   }
 };
 
@@ -232,6 +217,47 @@ const fetchRegister = async (data: any) => {
     return { success: false, error: (e as Error).message };
   }
 };
+
+interface MatchData {
+  success: boolean;
+  data: {
+    next: null| string ;
+    people: {
+      id: string;
+      name: string;
+      imageUrl: string;
+       
+    }[];
+  }
+}
+const getMatchData = async ( token: string, page: number= 1) => {
+  console.log("token", token);
+  try {
+    const response = await fetch(`${backendUrl}/match/get/${page}`, {
+      headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "Application/json"
+      },
+  });
+    const data: MatchData = await response.json();
+    console.log(JSON.stringify( data, null, 2) );
+    
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { success: false,    data: {
+      next: null,
+      people: [{
+        id: "",
+        name: "",
+        imageUrl: "",
+         
+      }]
+    } };
+  }
+}
+
+
 
 export {
   getMatchData,
