@@ -6,6 +6,7 @@ import { Chat } from "@/schemas/types";
 import { socket } from "@/utils/socket";
 import { getChats } from "@/utils/fetch/fetch";
 import { useUserData } from "@/context/UserDataContext";
+import { useToast } from "@/context/ToastContext";
 
 const pathToImage =
   "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
@@ -15,6 +16,7 @@ export default function ChatScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
+    const { setToast } = useToast();
 
   useEffect(() => {
     getChats(token as string, setChats);
@@ -23,6 +25,7 @@ export default function ChatScreen() {
       console.log("match event" ,setChats);
       console.log(`match with ${username}`);
       getChats(token as string, setChats);
+      setToast(`Match with ${username}`, true, 3000, "green");
     });
 
     socket.on(
