@@ -17,6 +17,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { joinChat, socket } from "@/utils/socket";
+import { postImageMessage, postTextMessage } from "@/utils/fetch/fetch";
+import { useUserData } from "@/context/UserDataContext";
 
 
 interface DUMMY_MESSAGES {
@@ -47,6 +49,7 @@ export default function MessageScreen() {
   const [messages, setMessages] = useState<DUMMY_MESSAGES[]>(DUMMY_MESSAGES);
   const flatListRef = useRef<FlatList>(null);
   const { chat_id } = useLocalSearchParams()
+  const { token } = useUserData()
 
   useEffect(() => {
 
@@ -64,7 +67,9 @@ export default function MessageScreen() {
       timestamp: new Date(),
       isMine: true,
     };
-    setMessages([...messages, newMessage]);
+    postTextMessage(token as string, chat_id as string, text).then(() => {
+      setMessages([...messages, newMessage]);
+    })
   };
 
   const handleImageSend = async () => {
@@ -81,7 +86,9 @@ export default function MessageScreen() {
         timestamp: new Date(),
         isMine: true,
       };
-      setMessages([...messages, newMessage]);
+      postImageMessage(token as string, chat_id as string, result.assets[0].uri).then(() => {
+        setMessages([...messages, newMessage]);
+      })
     }
   };
 
