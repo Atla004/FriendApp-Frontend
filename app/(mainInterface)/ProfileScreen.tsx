@@ -80,8 +80,6 @@ const ProfileScreen = () => {
       newPassword: "",
       confirmPassword: "",
       setCurrentPassword: (text: string) => {
-        console.log(text);
-        console.log({ ...passwordModalProps, currentPassword: text});
         setPasswordModalProps(prev => ({ ...prev, currentPassword: text }));
       },
       setNewPassword: (text: string) => {
@@ -121,10 +119,6 @@ const ProfileScreen = () => {
     });
 
 
-  useEffect(() => {
-    console.log("Password modal props changed", passwordModalProps.visible);
-  }
-  , [passwordModalProps]);
 
   const handleOnDelete = () => {
     if (deleteAccountModalProps.deleteConfirmation.toLowerCase() !== "delete") {
@@ -230,12 +224,13 @@ const ProfileScreen = () => {
     });
     setHasChanges(false);
   };
-
+  console.log(profileChanges.photo?.length)
+console.log(profileChanges.photo?.length? "si":"no")
   return (
     <>
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.photoContainer} onPress={pickImage}>
-          {profileChanges.photo ? (
+          {profileChanges.photo?.length  ? (
             <Image
               source={{ uri: `${pathToImage}${profileChanges.photo[0]}` }}
               style={styles.photo}
