@@ -5,12 +5,16 @@ interface ChatSectionProps {
     name: string;
     lastMessage: string;
     photo: string | null;
-    timestamp: Date;
+    timestamp: Date | null;
+    lastMessageName: string;
   };
   onPress: () => void;
 }
 
 export function ChatSection({ chat, onPress }: ChatSectionProps) {
+  const spanMessage = chat.lastMessage.length > 10 ? chat.lastMessage.slice(0, 10) + "..." : chat.lastMessage;
+  const spanName = chat.name.length > 10 ? chat.name.slice(0, 10) + "..." : chat.name;
+  const preview = chat.lastMessageName? spanName + ": " + spanMessage: "no messages yet";
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.photoContainer}>
@@ -25,11 +29,11 @@ export function ChatSection({ chat, onPress }: ChatSectionProps) {
         <View style={styles.header}>
           <Text style={styles.name}>{chat.name}</Text>
           <Text style={styles.time}>
-            {chat.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+            {chat.timestamp?.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
           </Text>
         </View>
         <Text style={styles.message} numberOfLines={1}>
-          {chat.lastMessage}
+          {preview}
         </Text>
       </View>
     </TouchableOpacity>

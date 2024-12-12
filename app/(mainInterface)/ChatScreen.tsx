@@ -9,52 +9,45 @@ import { socket } from "@/utils/socket";
 const data: GetChatsResponse = {
   success: "Found Chats!",
   data: [
-    {
-      _id: "67561f39a2fb58994b566dee",
-      users: [
-        {
-          username: "el_dolar",
-        },
-      ],
-      __v: 0,
-      last_message: {
-        datetime_sent: "2024-12-08T23:06:33.117Z",
-        content: "E",
-        author: {
-          username: "el_atla",
-        },
+      {
+          _id: "67561f39a2fb58994b566dee",
+          user_id: "67560c703f1af4b512279772",
+          user: "chantyuwu",
+          photo: "/public/el_dolar-1734016293288.jpg",
+          last_message: {
+              content: "Welcome!",
+              datetime_sent: "2024-12-12T00:16:50.716Z",
+              author: "el_atla"
+          }
       },
-    },
-  ],
-};
+      {
+          _id: "675afddec74fea6958ae5e24",
+          user_id: "675a331e098fce11ff954135",
+          user: "atlas",
+          photo: "/public/atlas-1734013616323.jpg",
+          last_message: null
+      }
+  ]
+}
 
+
+const pathToImage =
+  "https://vaippmtqyjpyxanjifki.supabase.co/storage/v1/object/public/peoplefinder-images";
 
 export default function ChatScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
 
-  socket.on('message', (content: string, username: string, chat_id: string) => {
-    console.log("Message: ",{content, username, chat_id});
-  })
+  socket.on("message", (content: string, username: string, chat_id: string) => {
+    console.log("Message: ", { content, username, chat_id });
+  });
 
-  const transformToChats = (response: GetChatsResponse): Chat[] => {
-    return response.data.map(chat => ({
-      _id: chat._id,
-      users: chat.users.map(user => user.username).join(", "),
-      last_message: {
-        datetime_sent: chat.last_message.datetime_sent,
-        content: chat.last_message.content,
-        author: chat.last_message.author.username,
-      },
-    }));
-  };
 
-  useEffect(() => setChats(transformToChats(data)), []);
-  
+  useEffect(() => setChats(data.data), []);
 
   const filteredChats = chats.filter((chat) =>
-    chat.users.toLowerCase().includes(searchQuery.toLowerCase())
+    chat.user.toLowerCase().includes(searchQuery.toLowerCase())
   );
   console.log(filteredChats.length);
 
@@ -76,17 +69,13 @@ export default function ChatScreen() {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <ChatSection
-              chat={ 
-                {
-                  name: item.users,
-                  lastMessage: item.last_message.content,
-                  timestamp: new Date(item.last_message.datetime_sent),
-                  photo: "https://example",
-                }
-                
-
-
-              }
+              chat={{
+                name: item.user,
+                lastMessage: item.last_message? item.last_message.content:"",
+                timestamp: item.last_message ? new Date(item.last_message.datetime_sent) : null,
+                photo: `${pathToImage}${item.photo}`,
+                lastMessageName: item.last_message ? item.last_message.author : "",
+              }}
               onPress={() =>
                 router.push({
                   pathname: "/(chatInterface)/MessageScreen",

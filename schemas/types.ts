@@ -23,19 +23,18 @@ const CountrySchema = z.object({
 });
 
 const lastMessageSchema = z.object({
-  datetime_sent: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid date format",
-  }),
+  datetime_sent: z.string(),
   content: z.string(),
   author: z.string(),
 });
 
 const ChatSchema = z.object({
   _id: z.string(),
-  users: z.string(),
-  last_message: lastMessageSchema,
+  user_id: z.string(),
+  user: z.string(),
+  photo: z.string(),
+  last_message: lastMessageSchema.nullable(),
 });
-
 
 const LikeSchema = z.object({
   _id: z.string(), 

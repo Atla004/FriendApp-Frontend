@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { z } from "zod";
+import { ChatSchema } from "./types";
 
 // Login
 export const loginBodySchema = z.object({
@@ -6,16 +7,18 @@ export const loginBodySchema = z.object({
   password: z.string().min(8).regex(/^\S+$/),
 });
 
-
 const UserInfoSchema = z.object({
   bio: z.string().optional(),
   full_name: z.string().optional(),
   gender: z.enum(["male", "female"]).optional(),
-  birthdate: z.string().refine(date => !isNaN(Date.parse(date)), {
-    message: "Invalid date format",
-  }).optional(),
+  birthdate: z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date format",
+    })
+    .optional(),
   country: z.string().optional(),
-  photos: z.array(z.string()).optional()
+  photos: z.array(z.string()).optional(),
 });
 
 export const loginResponseSchema = z.object({
@@ -57,23 +60,7 @@ export const createChatResponseSchema = z.object({
 // Get Chats
 export const getChatsResponseSchema = z.object({
   success: z.string(),
-  data: z.array(
-    z.object({
-      _id: z.string(),
-      users: z.array(
-        z.object({
-          username: z.string(),
-        })
-      ),
-      __v: z.number(),
-      last_message: z.object({
-        datetime_sent: z.string(),
-        content: z.string(),
-        author: z.object({
-          username: z.string(),
-        }),
-      }),
-    })
+  data: z.array(ChatSchema
   ),
 });
 
@@ -103,7 +90,6 @@ export const getMessagesResponseSchema = z.object({
     })
   ),
 });
-
 
 export type LoginBody = z.infer<typeof loginBodySchema>;
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
