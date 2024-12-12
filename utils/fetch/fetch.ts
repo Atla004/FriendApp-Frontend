@@ -136,9 +136,9 @@ const postLike = async (token: string, target: any) => {
   }
 };
 
-const getChats = async (token: string, setChats: any, setToast: any) => {
+const getChats = async (token: string, setChats: any) => {
   try {
-    const response = await fetch(`${backendUrl}/api/chat`, {
+    const response = await fetch(`${backendUrl}/messages/chats`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -149,7 +149,6 @@ const getChats = async (token: string, setChats: any, setToast: any) => {
     setChats(data.data);
   } catch (error) {
     console.error(error);
-    setToast("Error getting chat data", true, 3000);
   }
 };
 
