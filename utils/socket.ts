@@ -4,7 +4,7 @@ const socketServerUrl = process.env.EXPO_PUBLIC_WS_URL as string
 
 
 
-export const socket = io( "wss://txbq7qkk-6900.use2.devtunnels.ms", {
+export const socket = io( socketServerUrl, {
   transports: ['websocket'], 
   reconnectionAttempts: 2, 
   reconnectionDelay: 10000,
